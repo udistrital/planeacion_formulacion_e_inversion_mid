@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"math"
 	"net/url"
 	"sort"
@@ -1374,8 +1373,7 @@ func (c *FormulacionController) ConsultarUnidades() {
 		if TiposDependencias[i].Nombre == "INSTITUTO" || TiposDependencias[i].Nombre == "PREGRADO" || TiposDependencias[i].Nombre == "OFICINA" {
 			for j := 0; j < len(Dependencias); j++ {
 				if Dependencias[j].DependenciaTipoDependencia[0].TipoDependenciaId.Nombre == TiposDependencias[i].Nombre {
-					if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:"+strconv.Itoa(TiposDependencias[i].Id)+",DependenciaId:"+strconv.Itoa(Dependencias[j].Id)+"&limit=1", &respuesta); err == nil {
-						fmt.Println("RESPUESTA 1: ", respuesta)
+					if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:"+strconv.Itoa(TiposDependencias[i].Id)+",DependenciaId:"+strconv.Itoa(Dependencias[j].Id)+"&limit=0", &respuesta); err == nil {
 						unidad = *respuesta[0].DependenciaId
 						unidad.TipoDependencia = respuesta[0].TipoDependenciaId
 						unidades = append(unidades, unidad)
@@ -1387,7 +1385,6 @@ func (c *FormulacionController) ConsultarUnidades() {
 		} else {
 			if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:"+strconv.Itoa(TiposDependencias[i].Id)+"&limit=0", &respuesta); err == nil {
 				for j := 0; j < len(respuesta); j++ {
-					fmt.Println("RESPUESTA 2: ", respuesta)
 					unidad = *respuesta[j].DependenciaId
 					unidad.TipoDependencia = respuesta[j].TipoDependenciaId
 					unidades = append(unidades, unidad)
