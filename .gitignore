@@ -17,3 +17,5 @@ swagger/lib/
 planeacion_formulacion_mid
 *.exe*
 .exe~
+go.mod
+go.sum
