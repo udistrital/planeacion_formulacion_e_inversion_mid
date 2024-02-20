@@ -35,7 +35,7 @@ func TestConsultarTodasActividades(t *testing.T) {
 }
 
 func TestConsultarIdentificaciones(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/consultar_identificaciones/616f6911a985e921bca12e96/6184b3e6f6fc97850127bb68"); err == nil {
+	if response, err := http.Get("http://localhost:9012/v1/formulacion/consultar_identificaciones/618dfa66f6fc976f4627d9d6/617b6630f6fc97b776279afa"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarIdentificaciones Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
