@@ -1,11 +1,13 @@
 module github.com/udistrital/planeacion_formulacion_mid
 
-go 1.20
+go 1.21.3
 
 require (
 	github.com/astaxie/beego v1.12.3
 	github.com/smartystreets/goconvey v1.8.1
-	github.com/udistrital/utils_oas v0.0.0-20240129152747-c34acc600d22
+	github.com/udistrital/administrativa_mid_api v0.0.0-20230714214518-86d8006a1b9f
+	github.com/udistrital/planeacion_mid v0.0.0-20240319230828-55dca7e1194b
+	github.com/udistrital/utils_oas v0.0.0-20240409124758-617775bf7a8c
 )
 
 require (
@@ -44,5 +46,3 @@ require (
 	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-replace github.com/udistrital/utils_oas => ../utils_oas
