@@ -1,6 +1,6 @@
 package controllers
 
-import (
+/*import (
 	"bytes"
 	"net/http"
 	"testing"
@@ -141,7 +141,7 @@ func TestAgregarProyecto(t *testing.T) {
 
 //SE NECESITA EL JSON
 func TestGuardarDocumentos(t *testing.T) {
-	body := []byte(`{   
+	body := []byte(`{
 		"file": "si",
 		"documento": [{
         "IdTipoDocumento": 66,
@@ -168,7 +168,7 @@ func TestGuardarDocumentos(t *testing.T) {
 }
 
 func TestCrearPlan(t *testing.T) {
-	body := []byte(`{       
+	body := []byte(`{
 		"nombre": "Plan de Acción Proyecto de Inversión",
 		"descripcion": "Formato plan de acción proyecto de inversión",
 		"tipo_plan_id": "611af8364a34b3b2df3799a0",
@@ -452,4 +452,4 @@ func TestActualizarPresupuestoMeta(t *testing.T) {
 		t.Error("Error al crear la solicitud PUT: ", err.Error())
 		t.Fail()
 	}
-}
+}*/

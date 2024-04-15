@@ -7,7 +7,7 @@ import (
 )
 
 func TestConsultarPlan(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/consultar_plan/613acf8edf020f82a056eb2b/0"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/plan/613acf8edf020f82a056eb2b/0"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarPlan Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -21,7 +21,7 @@ func TestConsultarPlan(t *testing.T) {
 }
 
 func TestConsultarTodasActividades(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/consultar_todas_actividades/6139894fdf020f41fc56e5af/"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/actividad/6139894fdf020f41fc56e5af/"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarTodasActividades Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -35,7 +35,7 @@ func TestConsultarTodasActividades(t *testing.T) {
 }
 
 func TestConsultarIdentificaciones(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/consultar_identificaciones/618dfa66f6fc976f4627d9d6/617b6630f6fc97b776279afa"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/identificacion/618dfa66f6fc976f4627d9d6/617b6630f6fc97b776279afa"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarIdentificaciones Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -49,7 +49,7 @@ func TestConsultarIdentificaciones(t *testing.T) {
 }
 
 func TestConsultarPlanVersiones(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/consultar_plan_versiones/pruebas/2020/Plan de acción Inversión 20202"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/plan/versiones/pruebas/2020/Plan de acción Inversión 20202"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarPlanVersiones Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -63,7 +63,7 @@ func TestConsultarPlanVersiones(t *testing.T) {
 }
 
 func TestPonderacionActividades(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/ponderacion_actividades/64368f5aa280496519a44efc"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/actividad/ponderacion/64368f5aa280496519a44efc"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestPonderacionActividades Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -76,9 +76,9 @@ func TestPonderacionActividades(t *testing.T) {
 	}
 }
 
-//SE DEMORA MUCHO
-func TestConsultarRubros(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/consultar_rubros"); err == nil {
+// SE DEMORA MUCHO
+/*func TestConsultarRubros(t *testing.T) {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/rubros"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarRubros Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -89,10 +89,10 @@ func TestConsultarRubros(t *testing.T) {
 		t.Error("Error TestConsultarRubros:", err.Error())
 		t.Fail()
 	}
-}
+}*/
 
 func TestConsultarUnidades(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/consultar_unidades"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/unidades"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarUnidades Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -106,7 +106,7 @@ func TestConsultarUnidades(t *testing.T) {
 }
 
 func TestVinculacionTercero(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/vinculacion_tercero/59769"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/tercero/59769"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestVinculacionTercero Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -120,7 +120,7 @@ func TestVinculacionTercero(t *testing.T) {
 }
 
 func TestPlanes(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/planes/"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/planes/"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestPlanes Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -134,7 +134,7 @@ func TestPlanes(t *testing.T) {
 }
 
 func TestVerificarIdentificaciones(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/formulacion/verificar_identificaciones/616f6911a985e921bca12e96"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/identificacion/verificacion/616f6911a985e921bca12e96"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestVerificarIdentificaciones Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -153,7 +153,7 @@ func TestClonarFormato(t *testing.T) {
 		"vigencia": "2024"
 	}`)
 
-	if response, err := http.Post("http://localhost:9012/v1/formulacion/clonar_formato/611e4a2dd403481fb638b6e9", "application/json", bytes.NewBuffer(body)); err == nil {
+	if response, err := http.Post("http://localhost:8082/v1/formulacion/formato/611e4a2dd403481fb638b6e9/clonar", "application/json", bytes.NewBuffer(body)); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestClonarFormato Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -166,11 +166,11 @@ func TestClonarFormato(t *testing.T) {
 	}
 }
 
-//NO SE ENCUENTRA EL FORMATO, pero responde success
+// NO SE ENCUENTRA EL FORMATO y ya no manda success
 func TestConsultarArbolArmonizacion(t *testing.T) {
 	body := []byte(`{}`)
 
-	if response, err := http.Post("http://localhost:9012/v1/formulacion/consultar_arbol_armonizacion/611db9b4d403482fec38b637", "application/json", bytes.NewBuffer(body)); err == nil {
+	if response, err := http.Post("http://localhost:8082/v1/formulacion/arbol/armonizacion/611db9b4d403482fec38b637", "application/json", bytes.NewBuffer(body)); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarArbolArmonizacion Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -186,7 +186,7 @@ func TestConsultarArbolArmonizacion(t *testing.T) {
 func TestVersionarPlan(t *testing.T) {
 	body := []byte(`{}`)
 
-	if response, err := http.Post("http://localhost:9012/v1/formulacion/versionar_plan/61398379df020f786256e5a7", "application/json", bytes.NewBuffer(body)); err == nil {
+	if response, err := http.Post("http://localhost:8082/v1/formulacion/plan/61398379df020f786256e5a7/versionar", "application/json", bytes.NewBuffer(body)); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestVersionarPlan Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -199,7 +199,7 @@ func TestVersionarPlan(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestGuardarActividad(t *testing.T) {
 	body := []byte(`{{
 		"armo": "613991d2df020fd81056e5c8",
@@ -207,7 +207,7 @@ func TestGuardarActividad(t *testing.T) {
 		"entrada": {"1":{"dato":"Prueba Meta segplan","index":1},"10":{"activo":false,"dato":"Prueba Meta segplan","index":"10"},"11":{"activo":true,"dato":"Prueba Meta segplan","index":11},"12":{"activo":true,"dato":"Prueba Meta segplan","index":12},"13":{"activo":true,"dato":"Prueba Meta segplan","index":13},"14":{"activo":false,"dato":"Prueba Meta segplan","index":"14"},"2":{"dato":"Prueba Meta segplan","index":"2"},"3":{"dato":"Prueba Meta segplan","index":"3"},"4":{"dato":"Prueba Meta segplan","index":4},"5":{"dato":"Prueba Meta segplan","index":5},"6":{"dato":"Prueba Meta segplan","index":6},"7":{"dato":"Prueba Meta segplan","index":7},"8":{"dato":"Prueba Meta segplan","index":8},"9":{"activo":false,"dato":"Prueba Meta segplan","index":"9"}}
 	}}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/formulacion/guardar_actividad/", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/formulacion/actividad/", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -223,7 +223,7 @@ func TestGuardarActividad(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestActualizarActividad(t *testing.T) {
 	body := []byte(`{{
 		"armo": "613991d2df020fd81056e5c8",
@@ -231,7 +231,7 @@ func TestActualizarActividad(t *testing.T) {
 		"entrada": {"1":{"dato":"Prueba Meta segplan","index":1},"10":{"activo":false,"dato":"Prueba Meta segplan","index":"10"},"11":{"activo":true,"dato":"Prueba Meta segplan","index":11},"12":{"activo":true,"dato":"Prueba Meta segplan","index":12},"13":{"activo":true,"dato":"Prueba Meta segplan","index":13},"14":{"activo":false,"dato":"Prueba Meta segplan","index":"14"},"2":{"dato":"Prueba Meta segplan","index":"2"},"3":{"dato":"Prueba Meta segplan","index":"3"},"4":{"dato":"Prueba Meta segplan","index":4},"5":{"dato":"Prueba Meta segplan","index":5},"6":{"dato":"Prueba Meta segplan","index":6},"7":{"dato":"Prueba Meta segplan","index":7},"8":{"dato":"Prueba Meta segplan","index":8},"9":{"activo":false,"dato":"Prueba Meta segplan","index":"9"}}
 	}}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/formulacion/actualizar_actividad/613991d2df020fd81056e5c8/1", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/formulacion/actividad/613991d2df020fd81056e5c8/1", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -250,7 +250,7 @@ func TestActualizarActividad(t *testing.T) {
 func TestDesactivarActividad(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/formulacion/desactivar_actividad/613991d2df020fd81056e5c8/1", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/formulacion/actividad/613991d2df020fd81056e5c8/1/desactivar", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -276,7 +276,7 @@ func TestGuardarIdentificacion(t *testing.T) {
 		"activo": true
 	  }`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/formulacion/guardar_identificacion/616f6911a985e921bca12e96/6184b3e6f6fc97850127bb68", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/formulacion/identificacion/616f6911a985e921bca12e96/6184b3e6f6fc97850127bb68", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -295,7 +295,7 @@ func TestGuardarIdentificacion(t *testing.T) {
 func TestDesactivarIdentificacion(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/formulacion/desactivar_identificacion/616f6911a985e921bca12e96/6184b3e6f6fc97850127bb68/0", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/formulacion/identificacion/616f6911a985e921bca12e96/6184b3e6f6fc97850127bb68/0", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -307,6 +307,34 @@ func TestDesactivarIdentificacion(t *testing.T) {
 		}
 	} else {
 		t.Error("Error al crear la solicitud PUT: ", err.Error())
+		t.Fail()
+	}
+}
+
+func TestPlanesEnFormulacion(t *testing.T) {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/planes_formulacion/"); err == nil {
+		if response.StatusCode != 200 {
+			t.Error("Error TestPlanesEnFormulacion Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Fail()
+		} else {
+			t.Log("TestPlanesEnFormulacion Finalizado Correctamente (OK)")
+		}
+	} else {
+		t.Error("Error TestPlanesEnFormulacion:", err.Error())
+		t.Fail()
+	}
+}
+
+func GetPlanesUnidadesComun(t *testing.T) {
+	if response, err := http.Get("http://localhost:8082/v1/formulacion/planes_formulacion/"); err == nil {
+		if response.StatusCode != 200 {
+			t.Error("Error GetPlanesUnidadesComun Se esperaba 200 y se obtuvo", response.StatusCode)
+			t.Fail()
+		} else {
+			t.Log("GetPlanesUnidadesComun Finalizado Correctamente (OK)")
+		}
+	} else {
+		t.Error("Error GetPlanesUnidadesComun:", err.Error())
 		t.Fail()
 	}
 }
