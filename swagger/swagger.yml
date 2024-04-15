@@ -1,8 +1,7 @@
 swagger: "2.0"
 info:
   title: beego Test API
-  description: |
-    beego has a very cool tools to autogenerate documents for your API
+  description: beego has a very cool tools to autogenerate documents for your API
   version: 1.0.0
   termsOfService: http://beego.me/
   contact:
@@ -12,148 +11,100 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /v1
 paths:
-  /object/:
-    get:
-      tags:
-      - object
-      description: |-
-        get all objects
-        <br>
-      operationId: ObjectController.GetAll
-      responses:
-        "200":
-          description: ""
-          schema:
-            $ref: '#/definitions/models.Object'
-        "403":
-          description: :objectId is empty
-    post:
-      tags:
-      - object
-      description: |-
-        create object
-        <br>
-      operationId: ObjectController.Create
-      parameters:
-      - in: body
-        name: body
-        description: The object content
-        required: true
-        schema:
-          $ref: '#/definitions/models.Object'
-      responses:
-        "200":
-          description: '{string} models.Object.Id'
-        "403":
-          description: body is empty
-  /object/{objectId}:
-    get:
-      tags:
-      - object
-      description: |-
-        find object by objectid
-        <br>
-      operationId: ObjectController.Get
-      parameters:
-      - in: path
-        name: objectId
-        description: the objectid you want to get
-        required: true
-        type: string
-      responses:
-        "200":
-          description: ""
-          schema:
-            $ref: '#/definitions/models.Object'
-        "403":
-          description: :objectId is empty
+  /formulacion/actividad/{id}:
     put:
       tags:
-      - object
-      description: |-
-        update the object
-        <br>
-      operationId: ObjectController.Update
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.GuardarActividad
       parameters:
       - in: path
-        name: objectId
-        description: The objectid you want to update
+        name: id
+        description: The key for staticblock
         required: true
         type: string
       - in: body
         name: body
-        description: The body
+        description: body for Plan content
         required: true
         schema:
-          $ref: '#/definitions/models.Object'
+          $ref: '#/definitions/{}'
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Object'
+            $ref: '#/definitions/models.Formulacion'
         "403":
-          description: :objectId is empty
-    delete:
+          description: :id is empty
+  /formulacion/actividad/{id}/:
+    get:
       tags:
-      - object
-      description: |-
-        delete the object
-        <br>
-      operationId: ObjectController.Delete
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.GetAllActividades
       parameters:
       - in: path
-        name: objectId
-        description: The objectId you want to delete
+        name: id
+        description: The key for staticblock
         required: true
         type: string
-      responses:
-        "200":
-          description: '{string} delete success!'
-        "403":
-          description: objectId is empty
-  /user/:
-    get:
-      tags:
-      - user
-      description: |-
-        get all Users
-        <br>
-      operationId: UserController.GetAll
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.User'
-    post:
-      tags:
-      - user
-      description: |-
-        create users
-        <br>
-      operationId: UserController.CreateUser
-      parameters:
-      - in: body
-        name: body
-        description: body for user content
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
-      responses:
-        "200":
-          description: '{int} models.User.Id'
+            $ref: '#/definitions/models.Formulacion'
         "403":
-          description: body is empty
-  /user/{uid}:
-    get:
+          description: :id is empty
+  /formulacion/actividad/{id}/{index}:
+    put:
       tags:
-      - user
-      description: |-
-        get user by uid
-        <br>
-      operationId: UserController.Get
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.ActualizarActividad
       parameters:
       - in: path
-        name: uid
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/actividad/{id}/{index}/desactivar:
+    put:
+      tags:
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.DeleteActividad
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
         description: The key for staticblock
         required: true
         type: string
@@ -161,129 +112,916 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/models.Formulacion'
         "403":
-          description: :uid is empty
-    put:
+          description: :id is empty
+  /formulacion/actividad/ponderacion/{plan}:
+    get:
       tags:
-      - user
-      description: |-
-        update the user
-        <br>
-      operationId: UserController.Update
+      - formulacion
+      description: get Formulacion by id
+      operationId: FormulacionController.GetPonderacionActividades
       parameters:
       - in: path
-        name: uid
-        description: The uid you want to update
+        name: plan
+        description: The key for staticblock
         required: true
         type: string
-      - in: body
-        name: body
-        description: body for user content
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/models.Formulacion'
         "403":
-          description: :uid is not int
-    delete:
+          description: :id is empty
+  /formulacion/calculos_docentes:
+    post:
       tags:
-      - user
-      description: |-
-        delete the user
-        <br>
-      operationId: UserController.Delete
+      - formulacion
+      description: post Formulacion
+      operationId: FormulacionController.CalculosDocentes
+      parameters:
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/estructura_planes/{id}:
+    put:
+      tags:
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.EstructuraPlanes
       parameters:
       - in: path
-        name: uid
-        description: The uid you want to delete
+        name: id
+        description: The key for staticblock
         required: true
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
         "403":
-          description: uid is empty
-  /user/login:
-    get:
+          description: :id is empty
+  /formulacion/formato/{id}/clonar:
+    post:
       tags:
-      - user
-      description: |-
-        Logs user into the system
-        <br>
-      operationId: UserController.Login
+      - formulacion
+      description: post Formulacion by id
+      operationId: FormulacionController.ClonarFormato
       parameters:
-      - in: query
-        name: username
-        description: The username for login
+      - in: path
+        name: id
+        description: The key for staticblock
         required: true
         type: string
-      - in: query
-        name: password
-        description: The password for login
+      - in: body
+        name: body
+        description: body for Plan content
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/{}'
       responses:
         "200":
-          description: '{string} login success'
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
         "403":
-          description: user not exist
-  /user/logout:
+          description: :id is empty
+  /formulacion/get_arbol_armonizacion/{id}/:
+    post:
+      tags:
+      - formulacion
+      description: post Formulacion by id
+      operationId: FormulacionController.GetArbolArmonizacion
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/get_planes_unidades_comun/{id}:
+    post:
+      tags:
+      - formulacion
+      description: post Get planes en comun con unidades by id periodo-seguimiento
+      operationId: FormulacionController.GetPlanesUnidadesComun
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/habilitar_fechas_funcionamiento:
+    post:
+      tags:
+      - formulacion
+      description: Peticion POST para definir fechas en planes de acción de funcionamiento
+      operationId: FormulacionController.DefinirFechasFuncionamiento
+      parameters:
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "400":
+          description: bad request
+  /formulacion/identificacion/{id}/{idTipo}:
     get:
       tags:
-      - user
-      description: |-
-        Logs out current logged in user session
-        <br>
-      operationId: UserController.logout
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.GetAllIdentificacion
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: idTipo
+        description: The key for staticblock
+        required: true
+        type: string
       responses:
         "200":
-          description: '{string} logout success'
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.GuardarIdentificacion
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: idTipo
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/identificacion/{id}/{idTipo}/{index}:
+    put:
+      tags:
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.DeleteIdentificacion
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: idTipo
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/identificacion/verificacion/{id}:
+    get:
+      tags:
+      - formulacion
+      description: put Formulacion by id
+      operationId: FormulacionController.VerificarIdentificaciones
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/plan/{id}/{index}:
+    get:
+      tags:
+      - formulacion
+      description: get Plan by id
+      operationId: FormulacionController.GetPlan
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/plan/{id}/versionar:
+    post:
+      tags:
+      - formulacion
+      description: post Formulacion by id
+      operationId: FormulacionController.VersionarPlan
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/plan/versiones/{unidad}/{vigencia}/{nombre}:
+    get:
+      tags:
+      - formulacion
+      description: get Formulacion by id
+      operationId: FormulacionController.GetPlanVersiones
+      parameters:
+      - in: path
+        name: unidad
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: vigencia
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: nombre
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/planes:
+    get:
+      tags:
+      - formulacion
+      description: get Rubros
+      operationId: FormulacionController.Planes
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/planes_formulacion:
+    get:
+      tags:
+      - formulacion
+      description: get Planes en formulacion
+      operationId: FormulacionController.GetPlanesEnFormulacion
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "400":
+          description: bad response
+  /formulacion/rubros:
+    get:
+      tags:
+      - formulacion
+      description: get Rubros
+      operationId: FormulacionController.GetRubros
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/tercero/{tercero_id}:
+    get:
+      tags:
+      - formulacion
+      description: get VinculacionTercero
+      operationId: FormulacionController.VinculacionTercero
+      parameters:
+      - in: path
+        name: tercero_id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /formulacion/unidades:
+    get:
+      tags:
+      - formulacion
+      description: get Unidades
+      operationId: FormulacionController.GetUnidades
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.Formulacion'
+        "403":
+          description: :id is empty
+  /inversion/actividad/{id}/{index}:
+    put:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.ActualizarActividad
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/actividad/{id}/{index}/tabla:
+    put:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.ActualizarTablaActividad
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/actualizar_proyecto/{id}:
+    put:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.ActualizarProyectoGeneral
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/armonizar/{id}:
+    put:
+      tags:
+      - inversion
+      description: get Plan by id
+      operationId: InversionController.ArmonizarInversion
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/documentos:
+    post:
+      tags:
+      - inversion
+      description: post AddProyecto
+      operationId: InversionController.GuardarDocumentos
+      parameters:
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/magnitudes/{id}/{index}:
+    put:
+      tags:
+      - inversion
+      description: get Plan by id
+      operationId: InversionController.ProgMagnitudesPlan
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/magnitudes/{id}/{indexMeta}:
+    get:
+      tags:
+      - inversion
+      description: get MagnitudesProgramadas
+      operationId: InversionController.MagnitudesProgramadas
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/magnitudes/{id}/verificar:
+    get:
+      tags:
+      - inversion
+      description: get VerificarMagnitudesProgramadas
+      operationId: InversionController.VerificarMagnitudesProgramadas
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/metas/{id}:
+    get:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.AllMetasPlan
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.GuardarMeta
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/metas/{id}/{index}:
+    put:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.ActualizarMetaPlan
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/metas/{id}/{index}/inactivar:
+    put:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.InactivarMeta
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/metas/grupo:
+    post:
+      tags:
+      - inversion
+      description: post CrearPlan
+      operationId: InversionController.CrearPlan
+      parameters:
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: ""
+  /inversion/metas/presupuestos/{id}/{index}:
+    put:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.ActualizarPresupuestoMeta
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/planes:
+    post:
+      tags:
+      - inversion
+      description: post CrearPlan
+      operationId: InversionController.CrearPlan
+      parameters:
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: ""
+  /inversion/planes/{id}:
+    get:
+      tags:
+      - inversion
+      description: get GetPlanId
+      operationId: InversionController.GetPlanId
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/planes/{id}/informacion:
+    get:
+      tags:
+      - inversion
+      description: get Plan by id
+      operationId: InversionController.GetPlan
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/planes/{id}/versionar:
+    post:
+      tags:
+      - inversion
+      description: post Inversion by id
+      operationId: InversionController.VersionarPlan
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/proyectos:
+    post:
+      tags:
+      - inversion
+      description: post AddProyecto
+      operationId: InversionController.AddProyecto
+      parameters:
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+  /inversion/proyectos/{aplicativo_id}:
+    get:
+      tags:
+      - inversion
+      description: get GetAllProyectos
+      operationId: InversionController.GetAllProyectos
+      parameters:
+      - in: path
+        name: aplicativo_id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :aplicativo_id is empty
+  /inversion/proyectos/{id}:
+    get:
+      tags:
+      - inversion
+      description: get GetProyectoId
+      operationId: InversionController.GetProyectoId
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+    put:
+      tags:
+      - inversion
+      description: post EditProyecto
+      operationId: InversionController.EditProyecto
+      parameters:
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/proyectos/{id}/metas:
+    get:
+      tags:
+      - inversion
+      description: get GetMetasProyect
+      operationId: InversionController.GetMetasProyect
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
+  /inversion/subgrupo/detalle/{id}:
+    put:
+      tags:
+      - inversion
+      description: put Inversion by id
+      operationId: InversionController.ActualizarSubgrupoDetalle
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: body for Plan content
+        required: true
+        schema:
+          $ref: '#/definitions/{}'
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
 definitions:
-  models.Object:
-    title: Object
+  '{}':
+    title: '{}'
     type: object
-    properties:
-      ObjectId:
-        type: string
-      PlayerName:
-        type: string
-      Score:
-        type: integer
-        format: int64
-  models.Profile:
-    title: Profile
+  models.Formulacion:
+    title: Formulacion
     type: object
-    properties:
-      Address:
-        type: string
-      Age:
-        type: integer
-        format: int64
-      Email:
-        type: string
-      Gender:
-        type: string
-  models.User:
-    title: User
-    type: object
-    properties:
-      Id:
-        type: string
-      Password:
-        type: string
-      Profile:
-        $ref: '#/definitions/models.Profile'
-      Username:
-        type: string
 tags:
-- name: object
+- name: formulacion
   description: |
-    Operations about object
-- name: user
+    FormulacionController operations for Formulacion
+- name: inversion
   description: |
-    Operations about Users
+    InversionController operations for Inversion
