@@ -1511,8 +1511,3 @@ func GetPlanesUnidadesComun(id string, datos []byte) (interface{}, error) {
 		return nil, errors.New("error del servicio GetPlanesUnidadesComun: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 	}
 }
-
-// func funcion(id string, index string, body []byte) (interface{}, error) {
-//
-// 	return result, nil
-// }
