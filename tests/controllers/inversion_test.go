@@ -1,6 +1,6 @@
 package controllers
 
-/*import (
+import (
 	"bytes"
 	"net/http"
 	"testing"
@@ -139,7 +139,7 @@ func TestAgregarProyecto(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestGuardarDocumentos(t *testing.T) {
 	body := []byte(`{
 		"file": "si",
@@ -237,7 +237,7 @@ func TestVersionarPlanInversion(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestEditarProyecto(t *testing.T) {
 	body := []byte(`{
 		"codigo_proyecto": "prueba",
@@ -314,7 +314,7 @@ func TestActualizarProyectoGeneral(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestGuardarMeta(t *testing.T) {
 	body := []byte(`{}`)
 
@@ -334,7 +334,7 @@ func TestGuardarMeta(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestActualizarMetaPlan(t *testing.T) {
 	body := []byte(`{}`)
 
@@ -354,7 +354,7 @@ func TestActualizarMetaPlan(t *testing.T) {
 	}
 }
 
-//BUSCAR DATO QUE COINCIDA
+// BUSCAR DATO QUE COINCIDA
 func TestInactivarMeta(t *testing.T) {
 	body := []byte(`{}`)
 
@@ -374,7 +374,7 @@ func TestInactivarMeta(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestProgramarMagnitudesPlan(t *testing.T) {
 	body := []byte(`{}`)
 
@@ -394,7 +394,7 @@ func TestProgramarMagnitudesPlan(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestActualizarActividadInversion(t *testing.T) {
 	body := []byte(`{}`)
 
@@ -414,7 +414,7 @@ func TestActualizarActividadInversion(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestActualizarTablaActividad(t *testing.T) {
 	body := []byte(`{}`)
 
@@ -434,7 +434,7 @@ func TestActualizarTablaActividad(t *testing.T) {
 	}
 }
 
-//SE NECESITA EL JSON
+// SE NECESITA EL JSON
 func TestActualizarPresupuestoMeta(t *testing.T) {
 	body := []byte(`{}`)
 
@@ -452,4 +452,4 @@ func TestActualizarPresupuestoMeta(t *testing.T) {
 		t.Error("Error al crear la solicitud PUT: ", err.Error())
 		t.Fail()
 	}
-}*/
+}
