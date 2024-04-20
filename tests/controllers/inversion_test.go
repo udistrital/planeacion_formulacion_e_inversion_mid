@@ -7,7 +7,7 @@ import (
 )
 
 func TestProyecto(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/inversion/proyecto/617c3171f6fc97294f27a041"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/inversion/proyecto/617c3171f6fc97294f27a041"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestProyecto Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -21,7 +21,7 @@ func TestProyecto(t *testing.T) {
 }
 
 func TestConsultarMetasProyecto(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/inversion/consultar_metas_proyecto/62266cfa16511ea35c5be15f"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/inversion/proyectos/62266cfa16511ea35c5be15f/metas"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarMetasProyecto Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -35,7 +35,7 @@ func TestConsultarMetasProyecto(t *testing.T) {
 }
 
 func TestProyectos(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/inversion/proyectos/string"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/inversion/proyectos/string"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestProyectos Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -49,7 +49,7 @@ func TestProyectos(t *testing.T) {
 }
 
 func TestConsultarPlanIdentificador(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/inversion/consultar_plan/62150f8525e40c9662093e58"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/inversion/planes/62150f8525e40c9662093e58"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarPlanIdentificador Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -63,7 +63,7 @@ func TestConsultarPlanIdentificador(t *testing.T) {
 }
 
 func TestConsultarPlanInversion(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/inversion/consultar_informacion_plan/63f467aeccee49e93a859ace"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/inversion/planes/63f467aeccee49e93a859ace/informacion"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarPlanInversion Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -77,7 +77,7 @@ func TestConsultarPlanInversion(t *testing.T) {
 }
 
 func TestConsultarTodasMetasPlan(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/inversion/consulta_todas_metas/63f467aeccee49e93a859ace"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/inversion/metas/63f467aeccee49e93a859ace"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarTodasMetasPlan Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -91,7 +91,7 @@ func TestConsultarTodasMetasPlan(t *testing.T) {
 }
 
 func TestConsultarMagnitudesProgramadas(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/inversion/magnitudes/64367379a280497994a41e46/1"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/inversion/magnitudes/64367379a280497994a41e46/1"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarMagnitudesProgramadas Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -105,7 +105,7 @@ func TestConsultarMagnitudesProgramadas(t *testing.T) {
 }
 
 func TestVerificarMagnitudesProgramadas(t *testing.T) {
-	if response, err := http.Get("http://localhost:9012/v1/inversion/verificar_magnitudes/64367379a280497994a41e46/"); err == nil {
+	if response, err := http.Get("http://localhost:8082/v1/inversion/magnitudes/64367379a280497994a41e46/verificar"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestVerificarMagnitudesProgramadas Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -126,7 +126,7 @@ func TestAgregarProyecto(t *testing.T) {
 		"fuentes": []
 	}`)
 
-	if response, err := http.Post("http://localhost:9012/v1/inversion/proyecto/", "application/json", bytes.NewBuffer(body)); err == nil {
+	if response, err := http.Post("http://localhost:8082/v1/inversion/proyectos/", "application/json", bytes.NewBuffer(body)); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestAgregarProyecto Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -154,7 +154,7 @@ func TestGuardarDocumentos(t *testing.T) {
     	}]
 	}`)
 
-	if response, err := http.Post("http://localhost:9012/v1/inversion/guardar_documentos/", "application/json", bytes.NewBuffer(body)); err == nil {
+	if response, err := http.Post("http://localhost:8082/v1/inversion/documentos/", "application/json", bytes.NewBuffer(body)); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestGuardarDocumentos Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -179,7 +179,7 @@ func TestCrearPlan(t *testing.T) {
         "id": "61398379df020f786256e5a7"
 	  }`)
 
-	if response, err := http.Post("http://localhost:9012/v1/inversion/crearplan/", "application/json", bytes.NewBuffer(body)); err == nil {
+	if response, err := http.Post("http://localhost:8082/v1/inversion/planes/", "application/json", bytes.NewBuffer(body)); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestCrearPlan Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -208,7 +208,7 @@ func TestCrearGrupoMeta(t *testing.T) {
 		"indexMeta": "documento"
 	  }`)
 
-	if response, err := http.Post("http://localhost:9012/v1/inversion/crear_grupo_meta", "application/json", bytes.NewBuffer(body)); err == nil {
+	if response, err := http.Post("http://localhost:8082/v1/inversion/metas/grupo", "application/json", bytes.NewBuffer(body)); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestCrearGrupoMeta Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -224,7 +224,7 @@ func TestCrearGrupoMeta(t *testing.T) {
 func TestVersionarPlanInversion(t *testing.T) {
 	body := []byte(`{}`)
 
-	if response, err := http.Post("http://localhost:9012/v1/inversion/versionar_plan/618de204f6fc97904a27d902", "application/json", bytes.NewBuffer(body)); err == nil {
+	if response, err := http.Post("http://localhost:8082/v1/inversion/planes/618de204f6fc97904a27d902/versionar", "application/json", bytes.NewBuffer(body)); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestVersionarPlanInversion Se esperaba 200 y se obtuvo", response.StatusCode)
 			t.Fail()
@@ -246,7 +246,7 @@ func TestEditarProyecto(t *testing.T) {
 		"fuentes": []
 	}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/proyecto/65d2c11092a08b3774a7d737", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/proyectos/65d2c11092a08b3774a7d737", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -272,7 +272,7 @@ func TestActualizarSubgrupoDetalle(t *testing.T) {
 		"fecha_creacion": "2021-09-01T19:54:48.668+00:00"
 	  }`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/actualizar_subgrupo_detalle/612fda88df020f752656b310", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/subgrupo/detalle/612fda88df020f752656b310", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -298,7 +298,7 @@ func TestActualizarProyectoGeneral(t *testing.T) {
 		"fecha_creacion": "2021-08-19T12:10:21.911Z"
 	  }`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/actualizar_proyecto/611e4a2dd403481fb638b6e9", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/actualizar_proyecto/611e4a2dd403481fb638b6e9", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -318,7 +318,7 @@ func TestActualizarProyectoGeneral(t *testing.T) {
 func TestGuardarMeta(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/guardar_meta", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/metas", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -338,7 +338,7 @@ func TestGuardarMeta(t *testing.T) {
 func TestActualizarMetaPlan(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/actualizar_meta", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/metas/622676b216511e8ea55be6de/1", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -358,7 +358,7 @@ func TestActualizarMetaPlan(t *testing.T) {
 func TestInactivarMeta(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/inactivar_meta/622676b216511e8ea55be6de/1", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/metas/622676b216511e8ea55be6de/1/inactivar", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -378,7 +378,7 @@ func TestInactivarMeta(t *testing.T) {
 func TestProgramarMagnitudesPlan(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/magnitudes/", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/magnitudes/", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -398,7 +398,7 @@ func TestProgramarMagnitudesPlan(t *testing.T) {
 func TestActualizarActividadInversion(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/actualizar_actividad/", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/actividad/", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -418,7 +418,7 @@ func TestActualizarActividadInversion(t *testing.T) {
 func TestActualizarTablaActividad(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/actualizar_tabla_actividad/", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/actividad/id/index/tabla", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {
@@ -438,7 +438,7 @@ func TestActualizarTablaActividad(t *testing.T) {
 func TestActualizarPresupuestoMeta(t *testing.T) {
 	body := []byte(`{}`)
 
-	if request, err := http.NewRequest(http.MethodPut, "http://localhost:9012/v1/inversion/actualizar_presupuesto_meta/", bytes.NewBuffer(body)); err == nil {
+	if request, err := http.NewRequest(http.MethodPut, "http://localhost:8082/v1/inversion/metas/presupuestos/id/index", bytes.NewBuffer(body)); err == nil {
 		client := &http.Client{}
 		if response, err := client.Do(request); err == nil {
 			if response.StatusCode != 200 {

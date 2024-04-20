@@ -112,7 +112,7 @@ func (c *InversionController) GuardarDocumentos() {
 // @Param	id		path 	string	true		"The key for staticblock"
 // @Success 200
 // @Failure 403 :id is empty
-// @router /proyectos/:id [get]
+// @router /proyecto/:id [get]
 func (c *InversionController) GetProyectoId() {
 	defer errorhandler.HandlePanic(&c.Controller)
 
