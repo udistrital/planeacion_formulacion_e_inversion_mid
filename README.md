@@ -1,5 +1,5 @@
-# planeacion_formulacion_e_inversion_mid
-planeacion_formulacion_e_inversion_mid
+# planeacion_formulacion_mid
+Api Mid para el sistema de planeación universidad Distrital
 ## Especificaciones Técnicas
 
 ### Tecnologías Implementadas y Versiones
@@ -11,35 +11,53 @@ planeacion_formulacion_e_inversion_mid
 
 ## Variables de Entorno
 ```
-  PLANES_MID_HTTP_PORT: [Puerto de ejecución API]
-  PLANES_SERVICE: [Servicio Api planes:crud]
+
+  PLANEACION_FORMULACION_MID_HTTP_PORT = [Puerto de ejecución API]
+  PLANES_SERVICE = [Servicio API planes:crud]
+  PLAN_CUENTAS_SERVICE = [Servicio API de Cuentas]
+  OIKOS_SERVICE = [Servicio API de Oikos]
+  TERCEROS_SERVICE = [Servicio API de Terceros]
+  GESTOR_DOCUMENTAL_SERVICE = [Servicio API del Gestor Documental]
+  PARAMETROS_SERVICE = [Servicio API de Parametros]
 ```
 
-NOTA: Las variables se pueden ver en el fichero conf/app.conf y están identificadas con SGA_MID_HTTP_PORT...
+NOTA: Las variables se pueden ver en el fichero conf/app.conf y están identificadas con PLANEACION_FORMULACION_MID_HTTP_PORT...
+
 Ejecución del Proyecto
 
 ## Ejecución del proyecto
 ```
-#1. Obtener el repositorio con Go 
-go get github.com/udistrital/planeacion_mid
+
+#1. Obtener el repositorio con Go
+go get github.com/udistrital/planeacion_formulacion_mid
 
 #2. Moverse a la carpeta del repositorio
-cd $GOPATH/src/github.com/udistrital/planeacion_mid
+cd $GOPATH/src/github.com/udistrital/planeacion_formulacion_mid
+
 
 # 3. Moverse a la rama **develop**
 git pull origin develop && git checkout develop
 
 # 4. alimentar todas las variables de entorno que utiliza el proyecto.
-PLANES_MID_HTTP_PORT=8080 PLANES_MID_SOME_VARIABLE=some_value bee run
+
+PLANEACION_FORMULACION_MID_HTTP_PORT = 8082 
+PLANEACION_FORMULACION_MID_SOME_VARIABLE = some_value bee run
+
 ```
 
 
 ## Ejecución Pruebas
 
-Pruebas unitarias
-```
-# En Proceso
-```
+
+### Pruebas Unitarias
+#### FormulacionController
+
+![# En Proceso](/tests/Unit_Test/Pruebas_Formulacion.png)
+
+#### InversionController
+
+![# En Proceso](/tests/Unit_Test/Pruebas_Inversion.png)
+
 
 ## Licencia
 

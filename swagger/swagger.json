@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "title": "beego Test API",
-        "description": "beego has a very cool tools to autogenerate documents for your API\n",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
         "version": "1.0.0",
         "termsOfService": "http://beego.me/",
         "contact": {
@@ -15,242 +15,17 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/object/": {
+        "/formulacion/actividad/ponderacion/{plan}": {
             "get": {
                 "tags": [
-                    "object"
+                    "formulacion"
                 ],
-                "description": "get all objects\n\u003cbr\u003e",
-                "operationId": "ObjectController.GetAll",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.Object"
-                        }
-                    },
-                    "403": {
-                        "description": ":objectId is empty"
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "object"
-                ],
-                "description": "create object\n\u003cbr\u003e",
-                "operationId": "ObjectController.Create",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The object content",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Object"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{string} models.Object.Id"
-                    },
-                    "403": {
-                        "description": "body is empty"
-                    }
-                }
-            }
-        },
-        "/object/{objectId}": {
-            "get": {
-                "tags": [
-                    "object"
-                ],
-                "description": "find object by objectid\n\u003cbr\u003e",
-                "operationId": "ObjectController.Get",
+                "description": "get Formulacion by id",
+                "operationId": "FormulacionController.GetPonderacionActividades",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "objectId",
-                        "description": "the objectid you want to get",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.Object"
-                        }
-                    },
-                    "403": {
-                        "description": ":objectId is empty"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "object"
-                ],
-                "description": "update the object\n\u003cbr\u003e",
-                "operationId": "ObjectController.Update",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "objectId",
-                        "description": "The objectid you want to update",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Object"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.Object"
-                        }
-                    },
-                    "403": {
-                        "description": ":objectId is empty"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "object"
-                ],
-                "description": "delete the object\n\u003cbr\u003e",
-                "operationId": "ObjectController.Delete",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "objectId",
-                        "description": "The objectId you want to delete",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{string} delete success!"
-                    },
-                    "403": {
-                        "description": "objectId is empty"
-                    }
-                }
-            }
-        },
-        "/user/": {
-            "get": {
-                "tags": [
-                    "user"
-                ],
-                "description": "get all Users\n\u003cbr\u003e",
-                "operationId": "UserController.GetAll",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "user"
-                ],
-                "description": "create users\n\u003cbr\u003e",
-                "operationId": "UserController.CreateUser",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "body for user content",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{int} models.User.Id"
-                    },
-                    "403": {
-                        "description": "body is empty"
-                    }
-                }
-            }
-        },
-        "/user/login": {
-            "get": {
-                "tags": [
-                    "user"
-                ],
-                "description": "Logs user into the system\n\u003cbr\u003e",
-                "operationId": "UserController.Login",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "username",
-                        "description": "The username for login",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "password",
-                        "description": "The password for login",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{string} login success"
-                    },
-                    "403": {
-                        "description": "user not exist"
-                    }
-                }
-            }
-        },
-        "/user/logout": {
-            "get": {
-                "tags": [
-                    "user"
-                ],
-                "description": "Logs out current logged in user session\n\u003cbr\u003e",
-                "operationId": "UserController.logout",
-                "responses": {
-                    "200": {
-                        "description": "{string} logout success"
-                    }
-                }
-            }
-        },
-        "/user/{uid}": {
-            "get": {
-                "tags": [
-                    "user"
-                ],
-                "description": "get user by uid\n\u003cbr\u003e",
-                "operationId": "UserController.Get",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "uid",
+                        "name": "plan",
                         "description": "The key for staticblock",
                         "required": true,
                         "type": "string"
@@ -260,35 +35,37 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Formulacion"
                         }
                     },
                     "403": {
-                        "description": ":uid is empty"
+                        "description": ":id is empty"
                     }
                 }
-            },
+            }
+        },
+        "/formulacion/actividad/{id}": {
             "put": {
                 "tags": [
-                    "user"
+                    "formulacion"
                 ],
-                "description": "update the user\n\u003cbr\u003e",
-                "operationId": "UserController.Update",
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.GuardarActividad",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "uid",
-                        "description": "The uid you want to update",
+                        "name": "id",
+                        "description": "The key for staticblock",
                         "required": true,
                         "type": "string"
                     },
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "body for user content",
+                        "description": "body for Plan content",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/{}"
                         }
                     }
                 ],
@@ -296,103 +73,1494 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Formulacion"
                         }
                     },
                     "403": {
-                        "description": ":uid is not int"
+                        "description": ":id is empty"
                     }
                 }
-            },
-            "delete": {
+            }
+        },
+        "/formulacion/actividad/{id}/": {
+            "get": {
                 "tags": [
-                    "user"
+                    "formulacion"
                 ],
-                "description": "delete the user\n\u003cbr\u003e",
-                "operationId": "UserController.Delete",
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.GetAllActividades",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "uid",
-                        "description": "The uid you want to delete",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/actividad/{id}/{index}": {
+            "put": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.ActualizarActividad",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/actividad/{id}/{index}/desactivar": {
+            "put": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.DeleteActividad",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
                         "required": true,
                         "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "{string} delete success!"
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
                     },
                     "403": {
-                        "description": "uid is empty"
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/calculos_docentes": {
+            "post": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "post Formulacion",
+                "operationId": "FormulacionController.CalculosDocentes",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/estructura_planes/{id}": {
+            "put": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.EstructuraPlanes",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/formato/{id}/clonar": {
+            "post": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "post Formulacion by id",
+                "operationId": "FormulacionController.ClonarFormato",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/get_arbol_armonizacion/{id}/": {
+            "post": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "post Formulacion by id",
+                "operationId": "FormulacionController.GetArbolArmonizacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/get_planes_unidades_comun/{id}": {
+            "post": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "post Get planes en comun con unidades by id periodo-seguimiento",
+                "operationId": "FormulacionController.GetPlanesUnidadesComun",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/habilitar_fechas_funcionamiento": {
+            "post": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "Peticion POST para definir fechas en planes de acción de funcionamiento",
+                "operationId": "FormulacionController.DefinirFechasFuncionamiento",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request"
+                    }
+                }
+            }
+        },
+        "/formulacion/identificacion/verificacion/{id}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.VerificarIdentificaciones",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/identificacion/{id}/{idTipo}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.GetAllIdentificacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "idTipo",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.GuardarIdentificacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "idTipo",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/identificacion/{id}/{idTipo}/{index}": {
+            "put": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "put Formulacion by id",
+                "operationId": "FormulacionController.DeleteIdentificacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "idTipo",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/plan/versiones/{unidad}/{vigencia}/{nombre}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Formulacion by id",
+                "operationId": "FormulacionController.GetPlanVersiones",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "unidad",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "vigencia",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "nombre",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/plan/{id}/versionar": {
+            "post": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "post Formulacion by id",
+                "operationId": "FormulacionController.VersionarPlan",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/plan/{id}/{index}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Plan by id",
+                "operationId": "FormulacionController.GetPlan",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/planes": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Rubros",
+                "operationId": "FormulacionController.Planes",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/planes_formulacion": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Planes en formulacion",
+                "operationId": "FormulacionController.GetPlanesEnFormulacion",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "400": {
+                        "description": "bad response"
+                    }
+                }
+            }
+        },
+        "/formulacion/rubros": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Rubros",
+                "operationId": "FormulacionController.GetRubros",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/tercero/{tercero_id}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get VinculacionTercero",
+                "operationId": "FormulacionController.VinculacionTercero",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "tercero_id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/unidades": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Unidades",
+                "operationId": "FormulacionController.GetUnidades",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/actividad/{id}/{index}": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.ActualizarActividad",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/actividad/{id}/{index}/tabla": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.ActualizarTablaActividad",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/actualizar_proyecto/{id}": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.ActualizarProyectoGeneral",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/armonizar/{id}": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get Plan by id",
+                "operationId": "InversionController.ArmonizarInversion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/documentos": {
+            "post": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "post AddProyecto",
+                "operationId": "InversionController.GuardarDocumentos",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/magnitudes/{id}/verificar": {
+            "get": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get VerificarMagnitudesProgramadas",
+                "operationId": "InversionController.VerificarMagnitudesProgramadas",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/magnitudes/{id}/{indexMeta}": {
+            "get": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get MagnitudesProgramadas",
+                "operationId": "InversionController.MagnitudesProgramadas",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/magnitudes/{id}/{index}": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get Plan by id",
+                "operationId": "InversionController.ProgMagnitudesPlan",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/metas/grupo": {
+            "post": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "post CrearPlan",
+                "operationId": "InversionController.CrearPlan",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/inversion/metas/presupuestos/{id}/{index}": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.ActualizarPresupuestoMeta",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/metas/{id}": {
+            "get": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.AllMetasPlan",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.GuardarMeta",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/metas/{id}/{index}": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.ActualizarMetaPlan",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/metas/{id}/{index}/inactivar": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.InactivarMeta",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "index",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/planes": {
+            "post": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "post CrearPlan",
+                "operationId": "InversionController.CrearPlan",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/inversion/planes/{id}": {
+            "get": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get GetPlanId",
+                "operationId": "InversionController.GetPlanId",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/planes/{id}/informacion": {
+            "get": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get Plan by id",
+                "operationId": "InversionController.GetPlan",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/planes/{id}/versionar": {
+            "post": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "post Inversion by id",
+                "operationId": "InversionController.VersionarPlan",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/proyecto/{id}": {
+            "get": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get GetProyectoId",
+                "operationId": "InversionController.GetProyectoId",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/proyectos": {
+            "post": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "post AddProyecto",
+                "operationId": "InversionController.AddProyecto",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/inversion/proyectos/{aplicativo_id}": {
+            "get": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get GetAllProyectos",
+                "operationId": "InversionController.GetAllProyectos",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "aplicativo_id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":aplicativo_id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/proyectos/{id}": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "post EditProyecto",
+                "operationId": "InversionController.EditProyecto",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/proyectos/{id}/metas": {
+            "get": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "get GetMetasProyect",
+                "operationId": "InversionController.GetMetasProyect",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/inversion/subgrupo/detalle/{id}": {
+            "put": {
+                "tags": [
+                    "inversion"
+                ],
+                "description": "put Inversion by id",
+                "operationId": "InversionController.ActualizarSubgrupoDetalle",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ":id is empty"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "models.Object": {
-            "title": "Object",
-            "type": "object",
-            "properties": {
-                "ObjectId": {
-                    "type": "string"
-                },
-                "PlayerName": {
-                    "type": "string"
-                },
-                "Score": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
+        "models.Formulacion": {
+            "title": "Formulacion",
+            "type": "object"
         },
-        "models.Profile": {
-            "title": "Profile",
-            "type": "object",
-            "properties": {
-                "Address": {
-                    "type": "string"
-                },
-                "Age": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "Email": {
-                    "type": "string"
-                },
-                "Gender": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.User": {
-            "title": "User",
-            "type": "object",
-            "properties": {
-                "Id": {
-                    "type": "string"
-                },
-                "Password": {
-                    "type": "string"
-                },
-                "Profile": {
-                    "$ref": "#/definitions/models.Profile"
-                },
-                "Username": {
-                    "type": "string"
-                }
-            }
+        "{}": {
+            "title": "{}",
+            "type": "object"
         }
     },
     "tags": [
         {
-            "name": "object",
-            "description": "Operations about object\n"
+            "name": "formulacion",
+            "description": "FormulacionController operations for Formulacion\n"
         },
         {
-            "name": "user",
-            "description": "Operations about Users\n"
+            "name": "inversion",
+            "description": "InversionController operations for Inversion\n"
         }
     ]
 }
