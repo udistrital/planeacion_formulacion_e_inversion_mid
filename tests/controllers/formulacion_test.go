@@ -77,7 +77,7 @@ func TestPonderacionActividades(t *testing.T) {
 }
 
 // SE DEMORA MUCHO
-/*func TestConsultarRubros(t *testing.T) {
+func TestConsultarRubros(t *testing.T) {
 	if response, err := http.Get("http://localhost:8082/v1/formulacion/rubros"); err == nil {
 		if response.StatusCode != 200 {
 			t.Error("Error TestConsultarRubros Se esperaba 200 y se obtuvo", response.StatusCode)
@@ -89,7 +89,7 @@ func TestPonderacionActividades(t *testing.T) {
 		t.Error("Error TestConsultarRubros:", err.Error())
 		t.Fail()
 	}
-}*/
+}
 
 func TestConsultarUnidades(t *testing.T) {
 	if response, err := http.Get("http://localhost:8082/v1/formulacion/unidades"); err == nil {

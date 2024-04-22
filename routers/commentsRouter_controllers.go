@@ -378,6 +378,15 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:InversionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:InversionController"],
         beego.ControllerComments{
+            Method: "GetProyectoId",
+            Router: "/proyecto/:id",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:InversionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:InversionController"],
+        beego.ControllerComments{
             Method: "AddProyecto",
             Router: "/proyectos",
             AllowHTTPMethods: []string{"post"},
@@ -389,15 +398,6 @@ func init() {
         beego.ControllerComments{
             Method: "GetAllProyectos",
             Router: "/proyectos/:aplicativo_id",
-            AllowHTTPMethods: []string{"get"},
-            MethodParams: param.Make(),
-            Filters: nil,
-            Params: nil})
-
-    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:InversionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:InversionController"],
-        beego.ControllerComments{
-            Method: "GetProyectoId",
-            Router: "/proyectos/:id",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,

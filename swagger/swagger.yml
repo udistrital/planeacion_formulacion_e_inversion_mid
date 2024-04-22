@@ -644,6 +644,11 @@ paths:
         description: The key for staticblock
         required: true
         type: string
+      - in: path
+        name: index
+        description: The key for staticblock
+        required: true
+        type: string
       - in: body
         name: body
         description: body for Plan content
@@ -899,6 +904,23 @@ paths:
           description: ""
         "403":
           description: :id is empty
+  /inversion/proyecto/{id}:
+    get:
+      tags:
+      - inversion
+      description: get GetProyectoId
+      operationId: InversionController.GetProyectoId
+      parameters:
+      - in: path
+        name: id
+        description: The key for staticblock
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "403":
+          description: :id is empty
   /inversion/proyectos:
     post:
       tags:
@@ -933,22 +955,6 @@ paths:
         "403":
           description: :aplicativo_id is empty
   /inversion/proyectos/{id}:
-    get:
-      tags:
-      - inversion
-      description: get GetProyectoId
-      operationId: InversionController.GetProyectoId
-      parameters:
-      - in: path
-        name: id
-        description: The key for staticblock
-        required: true
-        type: string
-      responses:
-        "200":
-          description: ""
-        "403":
-          description: :id is empty
     put:
       tags:
       - inversion
