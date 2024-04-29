@@ -1264,7 +1264,7 @@ func VinculacionTercero(terceroId string) (interface{}, error) {
 		return nil, errors.New("error del servicio VinculacionTercero: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 	} else {
 		for i := 0; i < len(vinculaciones); i++ {
-			if vinculaciones[i].CargoId == 319 || vinculaciones[i].CargoId == 312 || vinculaciones[i].CargoId == 320 || vinculaciones[i].CargoId == 414 {
+			if vinculaciones[i].CargoId == 319 || vinculaciones[i].CargoId == 312 || vinculaciones[i].CargoId == 320 {
 				resultado = append(resultado, vinculaciones[i])
 			}
 		}
