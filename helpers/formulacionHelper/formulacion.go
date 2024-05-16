@@ -24,7 +24,7 @@ import (
 const (
 	CodigoTipoPlan                  string = "PL_SP"
 	CodigoTipoPlanAccionFormulacion string = "PAF_SP"
-	CodigoPlanEnFormulacion         string = "EF"
+	CodigoPlanEnFormulacion         string = "EF_SP"
 	Pregrado                        string = "PREGRADO"
 	Posgrado                        string = "POSGRADO"
 	RHVPosgrado                     string = "RHVPOS"
@@ -2369,4 +2369,78 @@ func ValidarUnidadesPlanes(periodo_seguimiento map[string]interface{}, body_unid
 
 	// Retorna la intersección de las unidades
 	return unidadesValidadas
+}
+
+//PLANES DE ACCIÓN
+func ObtenerPlanesAccion() ([]map[string]interface{}, error) {
+	var planesSeguimiento []map[string]interface{}
+	planesAvalados := make(map[string]map[string]interface{})
+	var resSeguimiento map[string]interface{}
+	var estadosSeguimiento map[string]string
+	var PlanesAccion []map[string]interface{}
+
+	if planesFormulacion, err := ObtenerPlanesFormulacion(); err == nil {
+		for _, plan := range planesFormulacion {
+			plan["fase"] = "Formulación"
+			if plan["estado"] == "Aval" {
+				planesAvalados[plan["id"].(string)] = plan
+			}
+			PlanesAccion = append(PlanesAccion, plan)
+		}
+
+		if resestadosSeguimiento, err := obtenerEstadosSeguimiento(); err == nil {
+			estadosSeguimiento = resestadosSeguimiento
+		} else {
+			return nil, fmt.Errorf("Error en ObtenerPlanesAccion al obtener los estados de seguimiento")
+		}
+
+		if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+`/seguimiento`, &resSeguimiento); err != nil {
+			return nil, fmt.Errorf("Error en ObtenerPlanesAccion al consultar Seguimiento")
+		}
+
+		request.LimpiezaRespuestaRefactor(resSeguimiento, &planesSeguimiento)
+		for _, planSeguimiento := range planesSeguimiento {
+			if planSeguimiento["plan_id"] != nil {
+				if plan, existePlan := planesAvalados[planSeguimiento["plan_id"].(string)]; existePlan {
+					planNuevo := make(map[string]interface{})
+					planNuevo["id"] = plan["id"]
+					planNuevo["dependencia_id"] = plan["dependencia_id"]
+					planNuevo["dependencia_nombre"] = plan["dependencia_nombre"]
+					planNuevo["vigencia_id"] = plan["vigencia_id"]
+					planNuevo["vigencia"] = plan["vigencia"]
+					planNuevo["nombre"] = plan["nombre"]
+					planNuevo["estado_id"] = planSeguimiento["estado_seguimiento_id"]
+					planNuevo["estado"] = estadosSeguimiento[planSeguimiento["estado_seguimiento_id"].(string)]
+					planNuevo["ultima_modificacion"] = planSeguimiento["fecha_modificacion"]
+					planNuevo["fase"] = "Seguimiento"
+					// La versión solo se devolverá en caso de que exista, esto solo aplica en los planes en formulación, por tanto, se debé manejar esto en el cliente
+					PlanesAccion = append(PlanesAccion, planNuevo)
+				}
+			}
+		}
+
+		sort.Slice(PlanesAccion, func(i, j int) bool {
+			return PlanesAccion[i]["ultima_modificacion"].(string) > PlanesAccion[j]["ultima_modificacion"].(string)
+		})
+	} else {
+		return nil, fmt.Errorf("Error en ObtenerPlanesAccion")
+	}
+
+	return PlanesAccion, nil
+}
+
+func obtenerEstadosSeguimiento() (map[string]string, error) {
+	estados := make(map[string]string)
+	var respuestaEstados map[string]interface{}
+	var estadoFormulacion []map[string]interface{}
+
+	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/estado-seguimiento", &respuestaEstados); err != nil {
+		return nil, fmt.Errorf("Error en obtenerEstadosSeguimiento")
+	}
+
+	request.LimpiezaRespuestaRefactor(respuestaEstados, &estadoFormulacion)
+	for _, estado := range estadoFormulacion {
+		estados[estado["_id"].(string)] = estado["nombre"].(string)
+	}
+	return estados, nil
 }
