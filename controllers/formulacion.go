@@ -36,6 +36,8 @@ func (c *FormulacionController) URLMapping() {
 	c.Mapping("DefinirFechasFuncionamiento", c.DefinirFechasFuncionamiento)
 	c.Mapping("CalculosDocentes", c.CalculosDocentes)
 	c.Mapping("EstructuraPlanes", c.EstructuraPlanes)
+	c.Mapping("PlanesDeAccion", c.PlanesDeAccion)
+	c.Mapping("PlanesDeAccionPorUnidad", c.PlanesDeAccionPorUnidad)
 }
 
 // ClonarFormato ...
@@ -583,4 +585,46 @@ func (c *FormulacionController) GetPlanesUnidadesComun() {
 	}
 
 	c.ServeJSON()
+}
+
+// PlanesDeAccion ...
+// @Title PlanesDeAccion
+// @Description get Planes de Acción
+// @Success 200 {object} models.Formulacion
+// @Failure 400 bad response
+// @router /planes_accion [get]
+func (c *FormulacionController) PlanesDeAccion() {
+	defer errorhandler.HandlePanic(&c.Controller)
+
+	if resultado, err := services.GetPlanesDeAccion(); err == nil {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
+	} else {
+		c.Ctx.Output.SetStatus(404)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+	}
+	c.ServeJSON()
+}
+
+// PlanesDeAccionPorUnidad...
+// @Title PlanesDeAccionPorUnidad
+// @Description get Planes de accion filtrando por el id de la unidad
+// @Param	id		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Formulacion
+// @Failure 403 :id is empty
+// @router /planes_accion/:unidad_id [get]
+func (c *FormulacionController) PlanesDeAccionPorUnidad() {
+	defer errorhandler.HandlePanic(&c.Controller)
+
+	id := c.Ctx.Input.Param(":unidad_id")
+
+	if resultado, err := services.GetPlanesDeAccionPorUnidad(id); err == nil {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
+	} else {
+		c.Ctx.Output.SetStatus(404)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+	}
+	c.ServeJSON()
+
 }

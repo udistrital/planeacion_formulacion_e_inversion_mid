@@ -685,6 +685,55 @@
                 }
             }
         },
+        "/formulacion/planes_accion": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Planes de Acción",
+                "operationId": "FormulacionController.PlanesDeAccion",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "400": {
+                        "description": "bad response"
+                    }
+                }
+            }
+        },
+        "/formulacion/planes_accion/{unidad_id}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Planes de accion filtrando por el id de la unidad",
+                "operationId": "FormulacionController.PlanesDeAccionPorUnidad",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
         "/formulacion/planes_formulacion": {
             "get": {
                 "tags": [

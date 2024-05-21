@@ -1511,3 +1511,26 @@ func GetPlanesUnidadesComun(id string, datos []byte) (interface{}, error) {
 		return nil, errors.New("error del servicio GetPlanesUnidadesComun: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 	}
 }
+
+func GetPlanesDeAccion() (interface{}, error) {
+	if datos, err := formulacionhelper.ObtenerPlanesAccion(); err == nil {
+		return datos, nil
+	} else {
+		return nil, errors.New("error del servicio GetPlanesDeAccion" + err.Error())
+	}
+}
+
+func GetPlanesDeAccionPorUnidad(unidadID string) (interface{}, error) {
+	var planes []map[string]interface{}
+
+	if datos, err := formulacionhelper.ObtenerPlanesAccion(); err == nil {
+		for _, plan := range datos {
+			if plan["dependencia_id"] == unidadID {
+				planes = append(planes, plan)
+			}
+		}
+		return planes, nil
+	} else {
+		return nil, errors.New("error del servicio GetPlanesDeAccion" + err.Error())
+	}
+}
