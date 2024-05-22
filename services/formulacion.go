@@ -904,6 +904,14 @@ func VersionarPlan(id string) (interface{}, error) {
 		plan["estado_plan_id"] = "614d3ad301c7a200482fabfd"
 		plan["padre_plan_id"] = id
 
+		if value, ok := planPadre["formato_id"].(string); ok {
+			plan["formato_id"] = value
+		}
+
+		if _, ok := planPadre["nueva_estructura"]; ok {
+			plan["nueva_estructura"] = true
+		}
+
 		if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/plan", "POST", &respuestaPost, plan); err != nil {
 			return nil, errors.New("error del servicio VersionarPlan: La solicitud versionando plan \"plan[\"_id\"].(string)\" contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 		}
