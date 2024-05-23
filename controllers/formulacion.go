@@ -33,7 +33,7 @@ func (c *FormulacionController) URLMapping() {
 	c.Mapping("VerificarIdentificaciones", c.VerificarIdentificaciones)
 	c.Mapping("PlanesEnFormulacion", c.PlanesEnFormulacion)
 	c.Mapping("GetPlanesUnidadesComun", c.GetPlanesUnidadesComun)
-	c.Mapping("DefinirFechasFuncionamiento", c.DefinirFechasFuncionamiento)
+	c.Mapping("HabilitarFechas", c.HabilitarFechas)
 	c.Mapping("CalculosDocentes", c.CalculosDocentes)
 	c.Mapping("EstructuraPlanes", c.EstructuraPlanes)
 	c.Mapping("PlanesDeAccion", c.PlanesDeAccion)
@@ -539,19 +539,19 @@ func (c *FormulacionController) EstructuraPlanes() {
 	c.ServeJSON()
 }
 
-// DefinirFechasFuncionamiento ...
-// @Title DefinirFechasFuncionamiento
-// @Description Peticion POST para definir fechas en planes de acción de funcionamiento
+// HabilitarFechas ...
+// @Title HabilitarFechas
+// @Description Peticion POST para habilitar fechas en planes de acción de funcionamiento e inversión para los procesos de formulación y seguimiento
 // @Param	body		body 	{}	true		"body for Plan content"
 // @Success 200 {object} models.Formulacion
 // @Failure 400 bad request
-// @router /habilitar_fechas_funcionamiento [post]
-func (c *FormulacionController) DefinirFechasFuncionamiento() {
+// @router /habilitar_fechas [post]
+func (c *FormulacionController) HabilitarFechas() {
 	defer errorhandler.HandlePanic(&c.Controller)
 
 	datos := c.Ctx.Input.RequestBody
 
-	if resultado, err := services.DefinirFechasFuncionamiento(datos); err == nil {
+	if resultado, err := services.DefinirFechas(datos); err == nil {
 		c.Ctx.Output.SetStatus(200)
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {

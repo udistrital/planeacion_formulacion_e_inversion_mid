@@ -1479,16 +1479,16 @@ func EstructuraPlanes(id string) (interface{}, error) {
 	return "La estructura de los planes fue actualizada correctamente", nil
 }
 
-func DefinirFechasFuncionamiento(datos []byte) (interface{}, error) {
+func DefinirFechas(datos []byte) (interface{}, error) {
 	var body map[string]interface{}
 	var res interface{}
 
 	// Decodificar JSON desde el cuerpo de la solicitud
 	err := json.Unmarshal(datos, &body)
 	if err != nil {
-		return nil, errors.New("error del servicio DefinirFechasFuncionamiento: Error al decodificar JSON" + err.Error())
+		return nil, errors.New("error del servicio DefinirFechasFormulacionSeguimiento: Error al decodificar JSON" + err.Error())
 	}
-	res = formulacionhelper.DefinirFechasFuncionamiento(body)
+	res = formulacionhelper.DefinirFechas(body)
 	return res, nil
 }
 

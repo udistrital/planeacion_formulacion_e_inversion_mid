@@ -99,8 +99,8 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
-            Method: "DefinirFechasFuncionamiento",
-            Router: "/habilitar_fechas_funcionamiento",
+            Method: "HabilitarFechas",
+            Router: "/habilitar_fechas",
             AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
