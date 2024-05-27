@@ -3,6 +3,7 @@ package formulacionHelper
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -2432,7 +2433,7 @@ func ValidarUnidadesPlanes(periodo_seguimiento map[string]interface{}, body_unid
 	return unidadesValidadas
 }
 
-//PLANES DE ACCIÓN
+// PLANES DE ACCIÓN
 func ObtenerPlanesAccion() ([]map[string]interface{}, error) {
 	var planesSeguimiento []map[string]interface{}
 	planesAvalados := make(map[string]map[string]interface{})
@@ -2504,4 +2505,74 @@ func obtenerEstadosSeguimiento() (map[string]string, error) {
 		estados[estado["_id"].(string)] = estado["nombre"].(string)
 	}
 	return estados, nil
+}
+
+func ObtenerIdParametros() (float64, float64, float64, error) {
+	var ParametroNoRegistra map[string]interface{}
+	var ParametroJefeOficina map[string]interface{}
+	var ParametroAsistenteDependencia map[string]interface{}
+	baseURL := "http://" + beego.AppConfig.String("ParametrosService") + "/parametro?query="
+
+	err := request.GetJson(baseURL+"CodigoAbreviacion:NR,TipoParametroId__CodigoAbreviacion:C,Activo:true", &ParametroNoRegistra)
+	IdNoRegistra, ok := ParametroNoRegistra["Data"].([]interface{})[0].(map[string]interface{})["Id"].(float64)
+
+	if err != nil || !ok {
+		panic(map[string]interface{}{"funcion": "VinculacionTercero", "err": "Error get ParametroNoRegistra", "status": "400", "log": err})
+	}
+
+	err = request.GetJson(baseURL+"CodigoAbreviacion:JO,TipoParametroId__CodigoAbreviacion:C,Activo:true", &ParametroJefeOficina)
+	IdJefeOficina, _ := ParametroJefeOficina["Data"].([]interface{})[0].(map[string]interface{})["Id"].(float64)
+	if err != nil || IdJefeOficina == 0 {
+		panic(map[string]interface{}{"funcion": "VinculacionTercero", "err": "Error get ParametroJefeOficina", "status": "400", "log": err})
+	}
+
+	err = request.GetJson(baseURL+"CodigoAbreviacion:AS_D,TipoParametroId__CodigoAbreviacion:C,Activo:true", &ParametroAsistenteDependencia)
+	IdAsistenteDependencia, _ := ParametroAsistenteDependencia["Data"].([]interface{})[0].(map[string]interface{})["Id"].(float64)
+	if err != nil || IdAsistenteDependencia == 0 {
+		panic(map[string]interface{}{"funcion": "VinculacionTercero", "err": "Error get ParametroAsistenteDependencia", "status": "400", "log": err})
+	}
+
+	return IdNoRegistra, IdJefeOficina, IdAsistenteDependencia, nil
+}
+
+func CambioCargoIdVinculacionTercero(idVinculacion string, body map[string]interface{}) (*models.Vinculacion, error) {
+	var vinculacion []models.Vinculacion
+
+	idNoRegistra, idJefeOficina, idAsistenteDependencia, err := ObtenerIdParametros()
+	if err != nil {
+		return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: Error al obtener los Id de los parametros")
+	}
+
+	err = request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion?query=Activo:true,Id:"+idVinculacion, &vinculacion)
+	if err != nil || vinculacion[0].CargoId == 0 {
+		return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: No se encontró la vinculación")
+	}
+
+	if vinculacion[0].CargoId == int(idJefeOficina) || vinculacion[0].CargoId == int(idAsistenteDependencia) || vinculacion[0].CargoId == int(idNoRegistra) {
+		if body["vincular"] == true {
+			vinculacion[0].CargoId = int(idAsistenteDependencia)
+		} else {
+			vinculacion[0].CargoId = int(idNoRegistra)
+		}
+		vinculacion[0].FechaCreacion, err = FormatearFecha(vinculacion[0].FechaCreacion)
+		if err != nil {
+			return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: Error al formatear la fecha de creación")
+		}
+		vinculacion[0].FechaModificacion = time.Now().Format(time.RFC3339)
+		if err := request.SendJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion/"+idVinculacion, "PUT", &vinculacion[0], vinculacion[0]); err != nil {
+			return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: Error al actualizar la vinculación")
+		}
+		return &vinculacion[0], nil
+	}
+
+	return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: No se encontró la vinculación")
+}
+
+func FormatearFecha(fecha string) (string, error) {
+	parsedTime, err := time.Parse("2006-01-02 15:04:05 -0700 -0700", fecha)
+	if err != nil {
+		return "", errors.New("error del helper FormatearFecha: Error al parsear la fecha")
+	}
+	// Formatear la fecha al nuevo formato
+	return parsedTime.Format(time.RFC3339), nil
 }
