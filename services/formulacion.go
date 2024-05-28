@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego"
 	formulacionhelper "github.com/udistrital/planeacion_formulacion_mid/helpers/formulacionHelper"
@@ -904,6 +905,14 @@ func VersionarPlan(id string) (interface{}, error) {
 		plan["estado_plan_id"] = "614d3ad301c7a200482fabfd"
 		plan["padre_plan_id"] = id
 
+		if value, ok := planPadre["formato_id"].(string); ok {
+			plan["formato_id"] = value
+		}
+
+		if _, ok := planPadre["nueva_estructura"]; ok {
+			plan["nueva_estructura"] = true
+		}
+
 		if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/plan", "POST", &respuestaPost, plan); err != nil {
 			return nil, errors.New("error del servicio VersionarPlan: La solicitud versionando plan \"plan[\"_id\"].(string)\" contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 		}
@@ -1471,16 +1480,16 @@ func EstructuraPlanes(id string) (interface{}, error) {
 	return "La estructura de los planes fue actualizada correctamente", nil
 }
 
-func DefinirFechasFuncionamiento(datos []byte) (interface{}, error) {
+func DefinirFechas(datos []byte) (interface{}, error) {
 	var body map[string]interface{}
 	var res interface{}
 
 	// Decodificar JSON desde el cuerpo de la solicitud
 	err := json.Unmarshal(datos, &body)
 	if err != nil {
-		return nil, errors.New("error del servicio DefinirFechasFuncionamiento: Error al decodificar JSON" + err.Error())
+		return nil, errors.New("error del servicio DefinirFechasFormulacionSeguimiento: Error al decodificar JSON" + err.Error())
 	}
-	res = formulacionhelper.DefinirFechasFuncionamiento(body)
+	res = formulacionhelper.DefinirFechas(body)
 	return res, nil
 }
 
@@ -1533,4 +1542,63 @@ func GetPlanesDeAccionPorUnidad(unidadID string) (interface{}, error) {
 	} else {
 		return nil, errors.New("error del servicio GetPlanesDeAccion" + err.Error())
 	}
+}
+
+func GetVinculacionTerceroByEmail(terceroEmail string) (interface{}, error) {
+	var vinculaciones []models.Vinculacion
+
+	idNoRegistra, idJefeOficina, idAsistenteDependencia, err := formulacionhelper.ObtenerIdParametros()
+	if err != nil {
+		panic(map[string]interface{}{"funcion": "VinculacionTercero", "err": "Error get parametros", "status": "400", "log": err})
+	}
+
+	if err := request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion?query=Activo:true,TerceroPrincipalId__UsuarioWSO2:"+terceroEmail, &vinculaciones); err != nil {
+		return nil, errors.New("error del servicio VinculacionTercero: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
+	} else {
+		var vinculacionesResponse []models.Vinculacion
+		for i := 0; i < len(vinculaciones); i++ {
+			if vinculaciones[i].CargoId == int(idJefeOficina) || vinculaciones[i].CargoId == int(idAsistenteDependencia) || vinculaciones[i].CargoId == int(idNoRegistra) {
+				vinculacionesResponse = append(vinculacionesResponse, vinculaciones[i])
+			}
+		}
+		if len(vinculacionesResponse) == 0 {
+			return nil, errors.New("error del servicio VinculacionTercero: No se encontró la vinculación")
+		}
+		return vinculacionesResponse, nil
+	}
+}
+
+func CambioCargoIdVinculacionTercero(idVinculacion string, cuerpo []byte) (*models.Vinculacion, error) {
+	var vinculacion []models.Vinculacion
+	var body map[string]interface{}
+	json.Unmarshal(cuerpo, &body)
+
+	idNoRegistra, idJefeOficina, idAsistenteDependencia, err := formulacionhelper.ObtenerIdParametros()
+	if err != nil {
+		return nil, errors.New("error del servicio CambioCargoIdVinculacionTercero: Error al obtener parametros" + err.Error())
+	}
+
+	err = request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion?query=Activo:true,Id:"+idVinculacion, &vinculacion)
+	if err != nil || vinculacion[0].CargoId == 0 {
+		return nil, errors.New("error del servicio CambioCargoIdVinculacionTercero: Error al obtener vinculacion" + err.Error())
+	}
+
+	if vinculacion[0].CargoId == int(idJefeOficina) || vinculacion[0].CargoId == int(idAsistenteDependencia) || vinculacion[0].CargoId == int(idNoRegistra) {
+		if body["vincular"] == true {
+			vinculacion[0].CargoId = int(idAsistenteDependencia)
+		} else {
+			vinculacion[0].CargoId = int(idNoRegistra)
+		}
+		vinculacion[0].FechaCreacion, err = formulacionhelper.FormatearFecha(vinculacion[0].FechaCreacion)
+		if err != nil {
+			return nil, errors.New("error del servicio CambioCargoIdVinculacionTercero: Error al formatear fecha" + err.Error())
+		}
+		vinculacion[0].FechaModificacion = time.Now().Format(time.RFC3339)
+		if err := request.SendJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion/"+idVinculacion, "PUT", &vinculacion[0], vinculacion[0]); err != nil {
+			return nil, errors.New("error del servicio CambioCargoIdVinculacionTercero: Error al actualizar vinculacion" + err.Error())
+		}
+		return &vinculacion[0], nil
+	}
+
+	return nil, errors.New("No se encontró la vinculación")
 }

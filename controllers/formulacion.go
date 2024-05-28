@@ -33,11 +33,13 @@ func (c *FormulacionController) URLMapping() {
 	c.Mapping("VerificarIdentificaciones", c.VerificarIdentificaciones)
 	c.Mapping("PlanesEnFormulacion", c.PlanesEnFormulacion)
 	c.Mapping("GetPlanesUnidadesComun", c.GetPlanesUnidadesComun)
-	c.Mapping("DefinirFechasFuncionamiento", c.DefinirFechasFuncionamiento)
+	c.Mapping("HabilitarFechas", c.HabilitarFechas)
 	c.Mapping("CalculosDocentes", c.CalculosDocentes)
 	c.Mapping("EstructuraPlanes", c.EstructuraPlanes)
 	c.Mapping("PlanesDeAccion", c.PlanesDeAccion)
 	c.Mapping("PlanesDeAccionPorUnidad", c.PlanesDeAccionPorUnidad)
+	c.Mapping("VinculacionTerceroByEmail", c.VinculacionTerceroByEmail)
+	c.Mapping("CambioCargoIdVinculacionTercero", c.CambioCargoIdVinculacionTercero)
 }
 
 // ClonarFormato ...
@@ -59,7 +61,7 @@ func (c *FormulacionController) ClonarFormato() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -84,7 +86,7 @@ func (c *FormulacionController) GuardarActividad() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -109,7 +111,7 @@ func (c *FormulacionController) GetPlan() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -136,7 +138,7 @@ func (c *FormulacionController) ActualizarActividad() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -161,7 +163,7 @@ func (c *FormulacionController) DeleteActividad() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -185,7 +187,7 @@ func (c *FormulacionController) GetAllActividades() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -209,7 +211,7 @@ func (c *FormulacionController) GetArbolArmonizacion() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -236,7 +238,7 @@ func (c *FormulacionController) GuardarIdentificacion() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -261,7 +263,7 @@ func (c *FormulacionController) GetAllIdentificacion() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -288,7 +290,7 @@ func (c *FormulacionController) DeleteIdentificacion() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -311,7 +313,7 @@ func (c *FormulacionController) VersionarPlan() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -338,7 +340,7 @@ func (c *FormulacionController) GetPlanVersiones() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -361,7 +363,7 @@ func (c *FormulacionController) PonderacionActividades() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -381,7 +383,7 @@ func (c *FormulacionController) GetRubros() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -401,7 +403,7 @@ func (c *FormulacionController) GetUnidades() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -424,7 +426,7 @@ func (c *FormulacionController) VinculacionTercero() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -444,7 +446,7 @@ func (c *FormulacionController) Planes() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -467,7 +469,7 @@ func (c *FormulacionController) VerificarIdentificaciones() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -487,7 +489,7 @@ func (c *FormulacionController) PlanesEnFormulacion() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -510,7 +512,7 @@ func (c *FormulacionController) CalculosDocentes() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -533,30 +535,30 @@ func (c *FormulacionController) EstructuraPlanes() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
 }
 
-// DefinirFechasFuncionamiento ...
-// @Title DefinirFechasFuncionamiento
-// @Description Peticion POST para definir fechas en planes de acción de funcionamiento
+// HabilitarFechas ...
+// @Title HabilitarFechas
+// @Description Peticion POST para habilitar fechas en planes de acción de funcionamiento e inversión para los procesos de formulación y seguimiento
 // @Param	body		body 	{}	true		"body for Plan content"
 // @Success 200 {object} models.Formulacion
 // @Failure 400 bad request
-// @router /habilitar_fechas_funcionamiento [post]
-func (c *FormulacionController) DefinirFechasFuncionamiento() {
+// @router /habilitar_fechas [post]
+func (c *FormulacionController) HabilitarFechas() {
 	defer errorhandler.HandlePanic(&c.Controller)
 
 	datos := c.Ctx.Input.RequestBody
 
-	if resultado, err := services.DefinirFechasFuncionamiento(datos); err == nil {
+	if resultado, err := services.DefinirFechas(datos); err == nil {
 		c.Ctx.Output.SetStatus(200)
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -581,7 +583,7 @@ func (c *FormulacionController) GetPlanesUnidadesComun() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 
 	c.ServeJSON()
@@ -601,7 +603,7 @@ func (c *FormulacionController) PlanesDeAccion() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 	c.ServeJSON()
 }
@@ -623,8 +625,54 @@ func (c *FormulacionController) PlanesDeAccionPorUnidad() {
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
 		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = requestresponse.APIResponseDTO(true, 404, nil, err)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
 	}
 	c.ServeJSON()
 
+}
+
+// VinculacionTerceroByEmail ...
+// @Title VinculacionTerceroByEmail
+// @Description get VinculacionTerceroByEmail
+// @Param	tercero_email	path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Formulacion
+// @Failure 403 :id is empty
+// @router /vinculacion_tercero_email/:tercero_email [get]
+func (c *FormulacionController) VinculacionTerceroByEmail() {
+	defer errorhandler.HandlePanic(&c.Controller)
+
+	terceroEmail := c.Ctx.Input.Param(":tercero_email")
+
+	if resultado, err := services.GetVinculacionTerceroByEmail(terceroEmail); err == nil {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
+	} else {
+		c.Ctx.Output.SetStatus(404)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
+	}
+	c.ServeJSON()
+}
+
+// CambioCargoIdVinculacionTercero ...
+// @Title CambioCargoIdVinculacionTercero
+// @Description put Cambio de cargo_id en VinculacionTercero by idVinculacion
+// @Param	id		path 	string	true		"The key for staticblock"
+// @Param	body		body 	{}	true		"body for Plan content"
+// @Success 200 {object} {}
+// @Failure 403 :id is empty
+// @router /cargo_vinculacion/:id [put]
+func (c *FormulacionController) CambioCargoIdVinculacionTercero() {
+	defer errorhandler.HandlePanic(&c.Controller)
+
+	id := c.Ctx.Input.Param(":id")
+	body := c.Ctx.Input.RequestBody
+
+	if resultado, err := services.CambioCargoIdVinculacionTercero(id, body); err == nil {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
+	} else {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err)
+	}
+	c.ServeJSON()
 }
