@@ -951,7 +951,7 @@ func VersionarPlan(id string) (interface{}, error) {
 		} else {
 			return nil, errors.New("error del servicio VersionarPlan: La solicitud obteniendo plan contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 		}
-		return respuestaPost, nil
+		return planVersionado, nil
 	} else {
 		return nil, errors.New("error del servicio VersionarPlan: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 	}
