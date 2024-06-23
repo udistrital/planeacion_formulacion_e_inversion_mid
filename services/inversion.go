@@ -12,6 +12,7 @@ import (
 	formulacionhelper "github.com/udistrital/planeacion_formulacion_mid/helpers/formulacionHelper"
 	inversionhelper "github.com/udistrital/planeacion_formulacion_mid/helpers/inversionHelper"
 	"github.com/udistrital/utils_oas/request"
+	"golang.org/x/sync/errgroup"
 )
 
 func AddProyecto(datos []byte) (interface{}, error) {
@@ -126,6 +127,8 @@ func GetProyectoId(id string) (interface{}, error) {
 	getProyect := make(map[string]interface{})
 	var infoProyect map[string]interface{}
 	var subgruposData map[string]interface{}
+	wge := new(errgroup.Group)
+
 	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan/"+id, &res); err == nil {
 		request.LimpiezaRespuestaRefactor(res, &infoProyect)
 		getProyect["nombre_proyecto"] = infoProyect["nombre"]
@@ -138,29 +141,36 @@ func GetProyectoId(id string) (interface{}, error) {
 		if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo?query=padre:"+padreId, &subgruposData); err == nil {
 			request.LimpiezaRespuestaRefactor(subgruposData, &infoSubgrupos)
 			for i := range infoSubgrupos {
-				var subgrupoDetalle map[string]interface{}
-				var detalleSubgrupos []map[string]interface{}
+				i := i
+				wge.Go(func() error {
+					var subgrupoDetalle map[string]interface{}
+					var detalleSubgrupos []map[string]interface{}
 
-				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle?query=subgrupo_id:"+infoSubgrupos[i]["_id"].(string), &subgrupoDetalle); err == nil {
-					request.LimpiezaRespuestaRefactor(subgrupoDetalle, &detalleSubgrupos)
+					if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle?query=subgrupo_id:"+infoSubgrupos[i]["_id"].(string), &subgrupoDetalle); err == nil {
+						request.LimpiezaRespuestaRefactor(subgrupoDetalle, &detalleSubgrupos)
 
-					armonizacion_dato_str := detalleSubgrupos[0]["dato"].(string)
-					var subgrupo_dato []map[string]interface{}
-					json.Unmarshal([]byte(armonizacion_dato_str), &subgrupo_dato)
+						armonizacion_dato_str := detalleSubgrupos[0]["dato"].(string)
+						var subgrupo_dato []map[string]interface{}
+						json.Unmarshal([]byte(armonizacion_dato_str), &subgrupo_dato)
 
-					if strings.Contains(strings.ToLower(infoSubgrupos[i]["nombre"].(string)), "soporte") {
-						getProyect["soportes"] = subgrupo_dato
-						getProyect["id_detalle_soportes"] = detalleSubgrupos[0]["_id"]
+						if strings.Contains(strings.ToLower(infoSubgrupos[i]["nombre"].(string)), "soporte") {
+							getProyect["soportes"] = subgrupo_dato
+							getProyect["id_detalle_soportes"] = detalleSubgrupos[0]["_id"]
+						}
+						if strings.Contains(strings.ToLower(infoSubgrupos[i]["nombre"].(string)), "metas") {
+							getProyect["metas"] = subgrupo_dato
+							getProyect["id_detalle_metas"] = detalleSubgrupos[0]["_id"]
+						}
+						if strings.Contains(strings.ToLower(infoSubgrupos[i]["nombre"].(string)), "fuentes") {
+							getProyect["fuentes"] = subgrupo_dato
+							getProyect["id_detalle_fuentes"] = detalleSubgrupos[0]["_id"]
+						}
 					}
-					if strings.Contains(strings.ToLower(infoSubgrupos[i]["nombre"].(string)), "metas") {
-						getProyect["metas"] = subgrupo_dato
-						getProyect["id_detalle_metas"] = detalleSubgrupos[0]["_id"]
-					}
-					if strings.Contains(strings.ToLower(infoSubgrupos[i]["nombre"].(string)), "fuentes") {
-						getProyect["fuentes"] = subgrupo_dato
-						getProyect["id_detalle_fuentes"] = detalleSubgrupos[0]["_id"]
-					}
-				}
+					return nil
+				})
+			}
+			if err := wge.Wait(); err != nil {
+				return nil, errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 			}
 		} else {
 			return nil, errors.New("error del servicio GetProyectoId: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido " + err.Error())
@@ -176,6 +186,7 @@ func GetMetasProyect(id string) (interface{}, error) {
 	getProyect := make(map[string]interface{})
 	var infoProyect map[string]interface{}
 	var subgruposData map[string]interface{}
+	wge := new(errgroup.Group)
 
 	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan/"+id, &res); err == nil {
 		request.LimpiezaRespuestaRefactor(res, &infoProyect)
@@ -184,19 +195,26 @@ func GetMetasProyect(id string) (interface{}, error) {
 		if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo?query=padre:"+id, &subgruposData); err == nil {
 			request.LimpiezaRespuestaRefactor(subgruposData, &infoSubgrupos)
 			for i := range infoSubgrupos {
-				var subgrupoDetalle map[string]interface{}
-				var detalleSubgrupos []map[string]interface{}
-				if strings.Contains(strings.ToLower(infoSubgrupos[i]["nombre"].(string)), "metas") {
-					getProyect["subgrupo_id_metas"] = infoSubgrupos[i]["_id"]
-					if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle?query=subgrupo_id:"+infoSubgrupos[i]["_id"].(string), &subgrupoDetalle); err == nil {
-						request.LimpiezaRespuestaRefactor(subgrupoDetalle, &detalleSubgrupos)
-						var dato_metas []map[string]interface{}
-						getProyect["id_detalle_meta"] = detalleSubgrupos[0]["_id"]
-						datoMeta_str := detalleSubgrupos[0]["dato"].(string)
-						json.Unmarshal([]byte(datoMeta_str), &dato_metas)
-						getProyect["metas"] = dato_metas
+				i := i
+				wge.Go(func() error {
+					var subgrupoDetalle map[string]interface{}
+					var detalleSubgrupos []map[string]interface{}
+					if strings.Contains(strings.ToLower(infoSubgrupos[i]["nombre"].(string)), "metas") {
+						getProyect["subgrupo_id_metas"] = infoSubgrupos[i]["_id"]
+						if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle?query=subgrupo_id:"+infoSubgrupos[i]["_id"].(string), &subgrupoDetalle); err == nil {
+							request.LimpiezaRespuestaRefactor(subgrupoDetalle, &detalleSubgrupos)
+							var dato_metas []map[string]interface{}
+							getProyect["id_detalle_meta"] = detalleSubgrupos[0]["_id"]
+							datoMeta_str := detalleSubgrupos[0]["dato"].(string)
+							json.Unmarshal([]byte(datoMeta_str), &dato_metas)
+							getProyect["metas"] = dato_metas
+						}
 					}
-				}
+					return nil
+				})
+			}
+			if err := wge.Wait(); err != nil {
+				return nil, errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 			}
 		} else {
 			return nil, errors.New("error del servicio GetMetasProyect: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido " + err.Error())
