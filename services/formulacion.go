@@ -11,12 +11,14 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/astaxie/beego"
 	formulacionhelper "github.com/udistrital/planeacion_formulacion_mid/helpers/formulacionHelper"
 	"github.com/udistrital/planeacion_formulacion_mid/models"
 	"github.com/udistrital/utils_oas/request"
+	"golang.org/x/sync/errgroup"
 )
 
 func ClonarFormato(id string, body []byte) (interface{}, error) {
@@ -1283,15 +1285,14 @@ func VinculacionTercero(terceroId string) (interface{}, error) {
 
 func Planes() (interface{}, error) {
 	var respuesta map[string]interface{}
-	var res map[string]interface{}
 	var planes []map[string]interface{}
 	var planesPED []map[string]interface{}
 	var planesPI []map[string]interface{}
-	var tipoPlanes []map[string]interface{}
-	var plan map[string]interface{}
 	var arregloPlanes []map[string]interface{}
 	var auxArregloPlanes []map[string]interface{}
 	var finalRes interface{}
+	var mutex sync.Mutex
+	wge := new(errgroup.Group)
 
 	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan?query=formato:true", &respuesta); err == nil {
 		request.LimpiezaRespuestaRefactor(respuesta, &planes)
@@ -1313,36 +1314,42 @@ func Planes() (interface{}, error) {
 		auxArregloPlanes = append(auxArregloPlanes, planesPED...)
 
 		for i := 0; i < len(auxArregloPlanes); i++ {
-			plan = auxArregloPlanes[i]
-			tipoPlanId := plan["tipo_plan_id"].(string)
+			i := i
+			wge.Go(func() error {
+				plan := auxArregloPlanes[i]
+				tipoPlanId := plan["tipo_plan_id"].(string)
 
-			if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/tipo-plan?query=_id:"+tipoPlanId, &res); err == nil {
-				request.LimpiezaRespuestaRefactor(res, &tipoPlanes)
-				tipoPlan := tipoPlanes[0]
-				nombreTipoPlan := tipoPlan["nombre"]
-				planesTipo := make(map[string]interface{})
-				planesTipo["_id"] = plan["_id"]
-				planesTipo["nombre"] = plan["nombre"]
-				planesTipo["descripcion"] = plan["descripcion"]
-				planesTipo["tipo_plan_id"] = tipoPlanId
-				planesTipo["formato"] = plan["formato"]
-				planesTipo["vigencia"] = plan["vigencia"]
-				planesTipo["dependencia_id"] = plan["dependencia_id"]
-				planesTipo["aplicativo_id"] = plan["aplicativo_id"]
-				planesTipo["activo"] = plan["activo"]
-				planesTipo["nombre_tipo_plan"] = nombreTipoPlan
+				var res map[string]interface{}
+				var tipoPlanes []map[string]interface{}
+				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/tipo-plan?query=_id:"+tipoPlanId, &res); err == nil {
+					request.LimpiezaRespuestaRefactor(res, &tipoPlanes)
+					tipoPlan := tipoPlanes[0]
+					nombreTipoPlan := tipoPlan["nombre"]
+					planesTipo := make(map[string]interface{})
+					planesTipo["_id"] = plan["_id"]
+					planesTipo["nombre"] = plan["nombre"]
+					planesTipo["descripcion"] = plan["descripcion"]
+					planesTipo["tipo_plan_id"] = tipoPlanId
+					planesTipo["formato"] = plan["formato"]
+					planesTipo["vigencia"] = plan["vigencia"]
+					planesTipo["dependencia_id"] = plan["dependencia_id"]
+					planesTipo["aplicativo_id"] = plan["aplicativo_id"]
+					planesTipo["activo"] = plan["activo"]
+					planesTipo["nombre_tipo_plan"] = nombreTipoPlan
 
-				arregloPlanes = append(arregloPlanes, planesTipo)
-
-				if arregloPlanes != nil {
+					mutex.Lock()
+					defer mutex.Unlock()
+					arregloPlanes = append(arregloPlanes, planesTipo)
 					finalRes = arregloPlanes
-				} else {
-					finalRes = ""
-				}
 
-			} else {
-				return nil, errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-			}
+				} else {
+					return errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
+				}
+				return nil
+			})
+		}
+		if err := wge.Wait(); err != nil {
+			return nil, errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 		}
 
 	} else {
