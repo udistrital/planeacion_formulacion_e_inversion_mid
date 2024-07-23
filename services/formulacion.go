@@ -977,14 +977,19 @@ func PonderacionActividades(plan string) (interface{}, error) {
 	var respuestaLimpiaDetalle []map[string]interface{}
 	var subgrupoDetalle map[string]interface{}
 	var hijos []map[string]interface{}
+	var hijosFiltrado []map[string]interface{}
 
 	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo/hijos/"+plan, &respuesta); err == nil {
 		request.LimpiezaRespuestaRefactor(respuesta, &hijos)
-
 		for i := 0; i < len(hijos); i++ {
-			if strings.Contains(strings.ToUpper(hijos[i]["nombre"].(string)), "PONDERACIÓN") && strings.Contains(strings.ToUpper(hijos[i]["nombre"].(string)), "ACTIVIDAD") || strings.Contains(strings.ToUpper(hijos[i]["nombre"].(string)), "PONDERACIÓN") {
-				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle/detalle/"+hijos[i]["_id"].(string), &respuestaDetalle); err == nil {
+			if hijos[i]["activo"] == true {
+				hijosFiltrado = append(hijosFiltrado, hijos[i])
+			}
+		}
 
+		for i := 0; i < len(hijosFiltrado); i++ {
+			if strings.Contains(strings.ToUpper(hijosFiltrado[i]["nombre"].(string)), "PONDERACIÓN") && strings.Contains(strings.ToUpper(hijosFiltrado[i]["nombre"].(string)), "ACTIVIDAD") || strings.Contains(strings.ToUpper(hijosFiltrado[i]["nombre"].(string)), "PONDERACIÓN") {
+				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle/detalle/"+hijosFiltrado[i]["_id"].(string), &respuestaDetalle); err == nil {
 					request.LimpiezaRespuestaRefactor(respuestaDetalle, &respuestaLimpiaDetalle)
 					subgrupoDetalle = respuestaLimpiaDetalle[0]
 
@@ -1006,7 +1011,6 @@ func PonderacionActividades(plan string) (interface{}, error) {
 						ponderacionActividades["Total"] = suma
 						return ponderacionActividades, nil
 					}
-
 				} else {
 					return nil, errors.New("error del servicio PonderacionActividades: La solicitud subgrupo_detalle plan \"plan\" contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 				}
