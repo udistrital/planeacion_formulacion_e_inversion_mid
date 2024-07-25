@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"math"
 	"net/http"
@@ -970,7 +969,6 @@ func GetPlanVersiones(unidad string, vigencia string, nombre string) (interface{
 		for _, version := range versionesOrdenadas {
 			padre_plan_id, ok := version["padre_plan_id"]
 			if ok {
-				fmt.Println("http://" + beego.AppConfig.String("PlanesService") + "/reformulacion?query=plan_id:" + padre_plan_id.(string))
 				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/reformulacion?query=plan_id:"+padre_plan_id.(string), &respuesta); err == nil {
 					reformulaciones = respuesta["Data"].([]interface{})
 					if len(reformulaciones) > 0 {
@@ -1534,11 +1532,9 @@ func GetPlanesUnidadesComun(id string, datos []byte) (interface{}, error) {
 
 		// Verificar el resultado
 		if len(unidadesValidadas) > 0 {
-			// fmt.Println("Unidades de intersección:", unidadesValidadas)
 			planesInteres := periodo_seguimiento["planes_interes"]
 			return planesInteres, nil
 		} else {
-			// fmt.Println("No hay unidades en la intersección")
 			// c.Data["json"] = map[string]interface{}{"Success": true, "Status": "404", "Message": "Successful", "Data": "Not found"}
 			return "No hay unidades en la intersección", nil
 		}
