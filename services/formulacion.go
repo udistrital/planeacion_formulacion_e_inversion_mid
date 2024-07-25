@@ -40,9 +40,6 @@ func ClonarFormato(id string, body []byte) (interface{}, error) {
 		request.LimpiezaRespuestaRefactor(respuesta, &planFormato)
 		json.Unmarshal(body, &parametros)
 
-		if esReformulacion, ok := parametros["reformulacion"]; ok && esReformulacion == true {
-			plan["padre_plan_id"] = id
-		}
 		plan["nombre"] = "" + planFormato["nombre"].(string)
 		plan["descripcion"] = planFormato["descripcion"].(string)
 		plan["tipo_plan_id"] = planFormato["tipo_plan_id"].(string)
