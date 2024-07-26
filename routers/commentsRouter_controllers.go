@@ -117,18 +117,18 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
-            Method: "GetAllIdentificacion",
+            Method: "GuardarIdentificacion",
             Router: "/identificacion/:id/:idTipo",
-            AllowHTTPMethods: []string{"get"},
+            AllowHTTPMethods: []string{"put"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
-            Method: "GuardarIdentificacion",
+            Method: "GetAllIdentificacion",
             Router: "/identificacion/:id/:idTipo",
-            AllowHTTPMethods: []string{"put"},
+            AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
@@ -245,6 +245,15 @@ func init() {
         beego.ControllerComments{
             Method: "VinculacionTerceroByEmail",
             Router: "/vinculacion_tercero_email/:tercero_email",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
+        beego.ControllerComments{
+            Method: "VinculacionTerceroByIdentificacion",
+            Router: "/vinculacion_tercero_identificacion/:identificacion",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,

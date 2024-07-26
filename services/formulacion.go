@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 	"net/http"
@@ -1612,4 +1613,32 @@ func CambioCargoIdVinculacionTercero(idVinculacion string, cuerpo []byte) (*mode
 	}
 
 	return nil, errors.New("No se encontró la vinculación")
+}
+
+func VinculacionTerceroByIdentificacion(identificacionTercero string) (interface{}, error) {
+	var vinculaciones []models.Vinculacion
+	var tercero []models.DatosIdentificacion
+
+	idNoRegistra, idJefeOficina, idAsistenteDependencia, err := formulacionhelper.ObtenerIdParametros()
+	if err != nil {
+		return nil, errors.New("error del servicio VinculacionTerceroByIdentificacion: Error get parametros" + err.Error())
+	}
+
+	s := "Numero:" + identificacionTercero + ",Activo:true"
+	if err := request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/datos_identificacion?query="+url.QueryEscape(s), &tercero); err != nil || tercero[0].TerceroID.ID == 0 {
+		return nil, errors.New("error del servicio VinculacionTerceroByIdentificacion: Error get tercero" + err.Error())
+	}
+
+	TerceroIdStr := fmt.Sprintf("%d", tercero[0].TerceroID.ID)
+	if err := request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion?query=Activo:true,TerceroPrincipalId:"+TerceroIdStr, &vinculaciones); err != nil {
+		return nil, errors.New("error del servicio VinculacionTerceroByIdentificacion: Error get vinculacion" + err.Error())
+	} else {
+		var vinculacionesResponse []models.Vinculacion
+		for i := 0; i < len(vinculaciones); i++ {
+			if vinculaciones[i].CargoId == int(idJefeOficina) || vinculaciones[i].CargoId == int(idAsistenteDependencia) || vinculaciones[i].CargoId == int(idNoRegistra) {
+				vinculacionesResponse = append(vinculacionesResponse, vinculaciones[i])
+			}
+		}
+		return vinculacionesResponse, nil
+	}
 }
