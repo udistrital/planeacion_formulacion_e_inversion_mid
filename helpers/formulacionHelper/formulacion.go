@@ -3,6 +3,7 @@ package formulacionHelper
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -24,7 +25,7 @@ import (
 const (
 	CodigoTipoPlan                  string = "PL_SP"
 	CodigoTipoPlanAccionFormulacion string = "PAF_SP"
-	CodigoPlanEnFormulacion         string = "EF"
+	CodigoPlanEnFormulacion         string = "EF_SP"
 	Pregrado                        string = "PREGRADO"
 	Posgrado                        string = "POSGRADO"
 	RHVPosgrado                     string = "RHVPOS"
@@ -1763,7 +1764,7 @@ func GetPlantilla(id string) (map[string]interface{}, error) {
 	var resPlantilla map[string]interface{}
 	var plantilla []map[string]interface{}
 
-	err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan?query=activo:true,formato:true,_id:"+id, &resPlantilla)
+	err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan?query=formato:true,_id:"+id, &resPlantilla)
 	if err != nil {
 		return nil, err
 	}
@@ -2107,18 +2108,18 @@ func compararSubgruposDetalle(objeto1, objeto2 map[string]interface{}) bool {
 	return true
 }
 
-func DefinirFechasFuncionamiento(body map[string]interface{}) []interface{} {
+func DefinirFechas(body map[string]interface{}) []interface{} {
 	var planesBody []map[string]interface{}
 
 	planesBody, err := ObtenerArrayPlanesInteres(body)
 	if err != nil {
-		panic(map[string]interface{}{"funcion": "DefinirFechasFuncionamientoFormulacion", "err": "Error en la decodificación JSON", "status": "400"})
+		panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error en la decodificación JSON", "status": "400"})
 	}
 
 	// Llamada a la función para codificar cada elemento del array de planes de interés
 	planesJSON, err := CodificarPlanesInteres(planesBody)
 	if err != nil {
-		panic(map[string]interface{}{"funcion": "DefinirFechasFuncionamientoFormulacion", "err": "Error al codificar los planes de interés", "status": "400"})
+		panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error al codificar los planes de interés", "status": "400"})
 	}
 
 	body["planes_interes"] = ""
@@ -2143,7 +2144,7 @@ func DefinirFechasFuncionamiento(body map[string]interface{}) []interface{} {
 					// Registro Fechas iguales
 					registro = manejarUnidades(body, registro, 1)
 					if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/periodo-seguimiento/"+registro["_id"].(string), "PUT", &res, registro); err != nil {
-						panic(map[string]interface{}{"funcion": "DefinirFechasFuncionamientoFormulacion", "err": "Error actualizando periodo-seguimiento \"registro[\"_id\"].(string)\"", "status": "400", "log": err})
+						panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error actualizando periodo-seguimiento \"registro[\"_id\"].(string)\"", "status": "400", "log": err})
 					}
 					respuestasAcumuladas = append(respuestasAcumuladas, res["Data"])
 				} else {
@@ -2151,7 +2152,7 @@ func DefinirFechasFuncionamiento(body map[string]interface{}) []interface{} {
 					// Si unidades_interes del registro se queda vacio, se debe inactivar
 					registro = manejarUnidades(body, registro, 2)
 					if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/periodo-seguimiento/"+registro["_id"].(string), "PUT", &res, registro); err != nil {
-						panic(map[string]interface{}{"funcion": "DefinirFechasFuncionamientoFormulacion", "err": "Error actualizando periodo-seguimiento \"registro[\"_id\"].(string)\"", "status": "400", "log": err})
+						panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error actualizando periodo-seguimiento \"registro[\"_id\"].(string)\"", "status": "400", "log": err})
 					}
 					if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/periodo-seguimiento/buscar-unidad-planes/2", "POST", &respuestaPost2, body); err == nil {
 						data, ok := respuestaPost2["Data"].([]interface{})
@@ -2159,15 +2160,26 @@ func DefinirFechasFuncionamiento(body map[string]interface{}) []interface{} {
 							registro2 := data[0].(map[string]interface{})
 							registro2 = manejarUnidades(body, registro2, 1)
 							if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/periodo-seguimiento/"+registro2["_id"].(string), "PUT", &res, registro2); err != nil {
-								panic(map[string]interface{}{"funcion": "DefinirFechasFuncionamientoFormulacion", "err": "Error actualizando periodo-seguimiento \"registro[\"_id\"].(string)\"", "status": "400", "log": err})
+								panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error actualizando periodo-seguimiento \"registro[\"_id\"].(string)\"", "status": "400", "log": err})
 							}
 							respuestasAcumuladas = append(respuestasAcumuladas, res["Data"])
 						} else { // No existe el registro, se crea el registro con las unidades del body
 							body["planes_interes"] = registro["planes_interes"]
 							if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/periodo-seguimiento", "POST", &res, body); err != nil {
-								panic(map[string]interface{}{"funcion": "DefinirFechasFuncionamientoFormulacion", "err": "Error agregaron periodo-seguimiento", "status": "400", "log": err})
+								panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error agregaron periodo-seguimiento", "status": "400", "log": err})
 							}
 							respuestasAcumuladas = append(respuestasAcumuladas, res["Data"])
+						}
+
+						//? Actualiza registros de seguimiento en caso de que hayan planes avalados con el formato_id igual al id del plan_interes del body
+						if body["tipo_seguimiento_id"] == "61f236f525e40c582a0840d0" || body["tipo_seguimiento_id"] == "6385fa136a0d19d7888837ed" {
+							periodoSeguimientoIdAntiguo := registro["_id"].(string)
+							periodoSeguimientoIdNuevo := res["Data"].(map[string]interface{})["_id"].(string)
+							unidadesBody, err := ObtenerArrayUnidadesInteres(body)
+							if err != nil {
+								panic(map[string]interface{}{"funcion": "manejarUnidades", "err": "Error en la decodificación JSON", "status": "400"})
+							}
+							CambiarFechasSeguimiento(planJSON, unidadesBody, periodoSeguimientoIdAntiguo, periodoSeguimientoIdNuevo)
 						}
 					}
 
@@ -2179,22 +2191,72 @@ func DefinirFechasFuncionamiento(body map[string]interface{}) []interface{} {
 						registro := data[0].(map[string]interface{})
 						registro = manejarUnidades(body, registro, 1)
 						if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/periodo-seguimiento/"+registro["_id"].(string), "PUT", &res, registro); err != nil {
-							panic(map[string]interface{}{"funcion": "DefinirFechasFuncionamientoFormulacion", "err": "Error actualizando periodo-seguimiento \"registro[\"_id\"].(string)\"", "status": "400", "log": err})
+							panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error actualizando periodo-seguimiento \"registro[\"_id\"].(string)\"", "status": "400", "log": err})
 						}
 						respuestasAcumuladas = append(respuestasAcumuladas, res["Data"])
 					} else { // No existe el registro, se crea
 						if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/periodo-seguimiento", "POST", &res, body); err != nil {
-							panic(map[string]interface{}{"funcion": "DefinirFechasFuncionamientoFormulacion", "err": "Error versionando periodo-seguimiento", "status": "400", "log": err})
+							panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error versionando periodo-seguimiento", "status": "400", "log": err})
 						}
 						respuestasAcumuladas = append(respuestasAcumuladas, res["Data"])
 					}
 				}
 			}
 		} else {
-			panic(map[string]interface{}{"funcion": "DefinirFechasFormulacionUnidadesPlanes", "err": "Error en la peticion", "status": "400", "log": err})
+			panic(map[string]interface{}{"funcion": "DefinirFechas", "err": "Error en la peticion", "status": "400", "log": err})
 		}
 	}
 	return respuestasAcumuladas
+}
+
+// ? Función para cambiar el periodo_seguimiento_id de los registros de seguimiento de los planes avalados
+func CambiarFechasSeguimiento(planInteresString string, unidadesInteres []map[string]interface{}, periodoSeguimientoIdAntiguo string, periodoSeguimientoIdNuevo string) {
+	var resPlanesAvalados map[string]interface{}
+	var resSeguimientos map[string]interface{}
+	var planesAvalados []map[string]interface{}
+	var seguimiento []map[string]interface{}
+	var seguimientoActualizado map[string]interface{}
+	var estadoAvaladoId = "6153355601c7a2365b2fb2a1"
+	var planInteres models.PlanInteres
+
+	err := json.Unmarshal([]byte(planInteresString), &planInteres)
+	if err != nil {
+		panic(map[string]interface{}{"funcion": "CambiarFechasSeguimiento", "err": "Error en la decodificación JSON", "status": "400"})
+	}
+
+	for _, unidad := range unidadesInteres {
+		idUnidad := strconv.Itoa(unidad["Id"].(int))
+
+		// 1. Se buscan planes avalados con el _id de la plantilla
+		if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan?query=formato_id:"+planInteres.Id+",estado_plan_id:"+estadoAvaladoId+",dependencia_id:"+idUnidad+",activo:true", &resPlanesAvalados); err != nil {
+			panic(map[string]interface{}{"funcion": "CambiarFechasSeguimiento", "err": "Error en la peticion", "status": "400", "log": err})
+		}
+		request.LimpiezaRespuestaRefactor(resPlanesAvalados, &planesAvalados)
+
+		if len(planesAvalados) < 1 { //? No se encontraron planes avalados con el formato_id del id del plan_interes
+			continue
+		}
+
+		// 2. Se buscan los registro de seguimiento en caso de que la respuesta anterior contenga registros
+
+		for _, planAvalado := range planesAvalados {
+			if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/seguimiento?query=plan_id:"+planAvalado["_id"].(string)+",periodo_seguimiento_id:"+periodoSeguimientoIdAntiguo+",activo:true", &resSeguimientos); err != nil {
+				panic(map[string]interface{}{"funcion": "CambiarFechasSeguimiento", "err": "Error en la peticion", "status": "400", "log": err})
+			}
+			request.LimpiezaRespuestaRefactor(resSeguimientos, &seguimiento)
+
+			if len(seguimiento) < 1 { //? No se encontraron registros de seguimiento
+				continue
+			}
+
+			// 3. Se actualizan los registros de seguimiento
+			seguimientoRegistro := seguimiento[0]
+			seguimientoRegistro["periodo_seguimiento_id"] = periodoSeguimientoIdNuevo
+			if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/seguimiento/"+seguimiento[0]["_id"].(string), "PUT", &seguimientoActualizado, seguimientoRegistro); err != nil {
+				panic(map[string]interface{}{"funcion": "CambiarFechasSeguimiento", "err": "Error actualizando seguimiento", "status": "400", "log": err})
+			}
+		}
+	}
 }
 
 func ObtenerArrayPlanesInteres(body map[string]interface{}) ([]map[string]interface{}, error) {
@@ -2369,4 +2431,148 @@ func ValidarUnidadesPlanes(periodo_seguimiento map[string]interface{}, body_unid
 
 	// Retorna la intersección de las unidades
 	return unidadesValidadas
+}
+
+// PLANES DE ACCIÓN
+func ObtenerPlanesAccion() ([]map[string]interface{}, error) {
+	var planesSeguimiento []map[string]interface{}
+	planesAvalados := make(map[string]map[string]interface{})
+	var resSeguimiento map[string]interface{}
+	var estadosSeguimiento map[string]string
+	var PlanesAccion []map[string]interface{}
+
+	if planesFormulacion, err := ObtenerPlanesFormulacion(); err == nil {
+		for _, plan := range planesFormulacion {
+			plan["fase"] = "Formulación"
+			if plan["estado"] == "Aval" {
+				planesAvalados[plan["id"].(string)] = plan
+			}
+			PlanesAccion = append(PlanesAccion, plan)
+		}
+
+		if resestadosSeguimiento, err := obtenerEstadosSeguimiento(); err == nil {
+			estadosSeguimiento = resestadosSeguimiento
+		} else {
+			return nil, fmt.Errorf("Error en ObtenerPlanesAccion al obtener los estados de seguimiento")
+		}
+
+		if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+`/seguimiento`, &resSeguimiento); err != nil {
+			return nil, fmt.Errorf("Error en ObtenerPlanesAccion al consultar Seguimiento")
+		}
+
+		request.LimpiezaRespuestaRefactor(resSeguimiento, &planesSeguimiento)
+		for _, planSeguimiento := range planesSeguimiento {
+			if planSeguimiento["plan_id"] != nil {
+				if plan, existePlan := planesAvalados[planSeguimiento["plan_id"].(string)]; existePlan {
+					planNuevo := make(map[string]interface{})
+					planNuevo["id"] = plan["id"]
+					planNuevo["dependencia_id"] = plan["dependencia_id"]
+					planNuevo["dependencia_nombre"] = plan["dependencia_nombre"]
+					planNuevo["vigencia_id"] = plan["vigencia_id"]
+					planNuevo["vigencia"] = plan["vigencia"]
+					planNuevo["nombre"] = plan["nombre"]
+					planNuevo["estado_id"] = planSeguimiento["estado_seguimiento_id"]
+					planNuevo["estado"] = estadosSeguimiento[planSeguimiento["estado_seguimiento_id"].(string)]
+					planNuevo["ultima_modificacion"] = planSeguimiento["fecha_modificacion"]
+					planNuevo["fase"] = "Seguimiento"
+					// La versión solo se devolverá en caso de que exista, esto solo aplica en los planes en formulación, por tanto, se debé manejar esto en el cliente
+					PlanesAccion = append(PlanesAccion, planNuevo)
+				}
+			}
+		}
+
+		sort.Slice(PlanesAccion, func(i, j int) bool {
+			return PlanesAccion[i]["ultima_modificacion"].(string) > PlanesAccion[j]["ultima_modificacion"].(string)
+		})
+	} else {
+		return nil, fmt.Errorf("Error en ObtenerPlanesAccion")
+	}
+
+	return PlanesAccion, nil
+}
+
+func obtenerEstadosSeguimiento() (map[string]string, error) {
+	estados := make(map[string]string)
+	var respuestaEstados map[string]interface{}
+	var estadoFormulacion []map[string]interface{}
+
+	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/estado-seguimiento", &respuestaEstados); err != nil {
+		return nil, fmt.Errorf("Error en obtenerEstadosSeguimiento")
+	}
+
+	request.LimpiezaRespuestaRefactor(respuestaEstados, &estadoFormulacion)
+	for _, estado := range estadoFormulacion {
+		estados[estado["_id"].(string)] = estado["nombre"].(string)
+	}
+	return estados, nil
+}
+
+func ObtenerIdParametros() (float64, float64, float64, error) {
+	var ParametroNoRegistra map[string]interface{}
+	var ParametroJefeOficina map[string]interface{}
+	var ParametroAsistenteDependencia map[string]interface{}
+	baseURL := "http://" + beego.AppConfig.String("ParametrosService") + "/parametro?query="
+
+	err := request.GetJson(baseURL+"CodigoAbreviacion:NR,TipoParametroId__CodigoAbreviacion:C,Activo:true", &ParametroNoRegistra)
+	IdNoRegistra, ok := ParametroNoRegistra["Data"].([]interface{})[0].(map[string]interface{})["Id"].(float64)
+
+	if err != nil || !ok {
+		panic(map[string]interface{}{"funcion": "VinculacionTercero", "err": "Error get ParametroNoRegistra", "status": "400", "log": err})
+	}
+
+	err = request.GetJson(baseURL+"CodigoAbreviacion:JO,TipoParametroId__CodigoAbreviacion:C,Activo:true", &ParametroJefeOficina)
+	IdJefeOficina, _ := ParametroJefeOficina["Data"].([]interface{})[0].(map[string]interface{})["Id"].(float64)
+	if err != nil || IdJefeOficina == 0 {
+		panic(map[string]interface{}{"funcion": "VinculacionTercero", "err": "Error get ParametroJefeOficina", "status": "400", "log": err})
+	}
+
+	err = request.GetJson(baseURL+"CodigoAbreviacion:AS_D,TipoParametroId__CodigoAbreviacion:C,Activo:true", &ParametroAsistenteDependencia)
+	IdAsistenteDependencia, _ := ParametroAsistenteDependencia["Data"].([]interface{})[0].(map[string]interface{})["Id"].(float64)
+	if err != nil || IdAsistenteDependencia == 0 {
+		panic(map[string]interface{}{"funcion": "VinculacionTercero", "err": "Error get ParametroAsistenteDependencia", "status": "400", "log": err})
+	}
+
+	return IdNoRegistra, IdJefeOficina, IdAsistenteDependencia, nil
+}
+
+func CambioCargoIdVinculacionTercero(idVinculacion string, body map[string]interface{}) (*models.Vinculacion, error) {
+	var vinculacion []models.Vinculacion
+
+	idNoRegistra, idJefeOficina, idAsistenteDependencia, err := ObtenerIdParametros()
+	if err != nil {
+		return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: Error al obtener los Id de los parametros")
+	}
+
+	err = request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion?query=Activo:true,Id:"+idVinculacion, &vinculacion)
+	if err != nil || vinculacion[0].CargoId == 0 {
+		return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: No se encontró la vinculación")
+	}
+
+	if vinculacion[0].CargoId == int(idJefeOficina) || vinculacion[0].CargoId == int(idAsistenteDependencia) || vinculacion[0].CargoId == int(idNoRegistra) {
+		if body["vincular"] == true {
+			vinculacion[0].CargoId = int(idAsistenteDependencia)
+		} else {
+			vinculacion[0].CargoId = int(idNoRegistra)
+		}
+		vinculacion[0].FechaCreacion, err = FormatearFecha(vinculacion[0].FechaCreacion)
+		if err != nil {
+			return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: Error al formatear la fecha de creación")
+		}
+		vinculacion[0].FechaModificacion = time.Now().Format(time.RFC3339)
+		if err := request.SendJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion/"+idVinculacion, "PUT", &vinculacion[0], vinculacion[0]); err != nil {
+			return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: Error al actualizar la vinculación")
+		}
+		return &vinculacion[0], nil
+	}
+
+	return nil, errors.New("error del helper CambioCargoIdVinculacionTercero: No se encontró la vinculación")
+}
+
+func FormatearFecha(fecha string) (string, error) {
+	parsedTime, err := time.Parse("2006-01-02 15:04:05 -0700 -0700", fecha)
+	if err != nil {
+		return "", errors.New("error del helper FormatearFecha: Error al parsear la fecha")
+	}
+	// Formatear la fecha al nuevo formato
+	return parsedTime.Format(time.RFC3339), nil
 }

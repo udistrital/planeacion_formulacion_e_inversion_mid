@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 	"net/http"
@@ -11,11 +12,14 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/astaxie/beego"
 	formulacionhelper "github.com/udistrital/planeacion_formulacion_mid/helpers/formulacionHelper"
 	"github.com/udistrital/planeacion_formulacion_mid/models"
 	"github.com/udistrital/utils_oas/request"
+	"golang.org/x/sync/errgroup"
 )
 
 func ClonarFormato(id string, body []byte) (interface{}, error) {
@@ -904,6 +908,14 @@ func VersionarPlan(id string) (interface{}, error) {
 		plan["estado_plan_id"] = "614d3ad301c7a200482fabfd"
 		plan["padre_plan_id"] = id
 
+		if value, ok := planPadre["formato_id"].(string); ok {
+			plan["formato_id"] = value
+		}
+
+		if _, ok := planPadre["nueva_estructura"]; ok {
+			plan["nueva_estructura"] = true
+		}
+
 		if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/plan", "POST", &respuestaPost, plan); err != nil {
 			return nil, errors.New("error del servicio VersionarPlan: La solicitud versionando plan \"plan[\"_id\"].(string)\" contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 		}
@@ -942,7 +954,7 @@ func VersionarPlan(id string) (interface{}, error) {
 		} else {
 			return nil, errors.New("error del servicio VersionarPlan: La solicitud obteniendo plan contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 		}
-		return respuestaPost, nil
+		return planVersionado, nil
 	} else {
 		return nil, errors.New("error del servicio VersionarPlan: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 	}
@@ -966,14 +978,19 @@ func PonderacionActividades(plan string) (interface{}, error) {
 	var respuestaLimpiaDetalle []map[string]interface{}
 	var subgrupoDetalle map[string]interface{}
 	var hijos []map[string]interface{}
+	var hijosFiltrado []map[string]interface{}
 
 	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo/hijos/"+plan, &respuesta); err == nil {
 		request.LimpiezaRespuestaRefactor(respuesta, &hijos)
-
 		for i := 0; i < len(hijos); i++ {
-			if strings.Contains(strings.ToUpper(hijos[i]["nombre"].(string)), "PONDERACIÓN") && strings.Contains(strings.ToUpper(hijos[i]["nombre"].(string)), "ACTIVIDAD") || strings.Contains(strings.ToUpper(hijos[i]["nombre"].(string)), "PONDERACIÓN") {
-				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle/detalle/"+hijos[i]["_id"].(string), &respuestaDetalle); err == nil {
+			if hijos[i]["activo"] == true {
+				hijosFiltrado = append(hijosFiltrado, hijos[i])
+			}
+		}
 
+		for i := 0; i < len(hijosFiltrado); i++ {
+			if strings.Contains(strings.ToUpper(hijosFiltrado[i]["nombre"].(string)), "PONDERACIÓN") && strings.Contains(strings.ToUpper(hijosFiltrado[i]["nombre"].(string)), "ACTIVIDAD") || strings.Contains(strings.ToUpper(hijosFiltrado[i]["nombre"].(string)), "PONDERACIÓN") {
+				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle/detalle/"+hijosFiltrado[i]["_id"].(string), &respuestaDetalle); err == nil {
 					request.LimpiezaRespuestaRefactor(respuestaDetalle, &respuestaLimpiaDetalle)
 					subgrupoDetalle = respuestaLimpiaDetalle[0]
 
@@ -995,7 +1012,6 @@ func PonderacionActividades(plan string) (interface{}, error) {
 						ponderacionActividades["Total"] = suma
 						return ponderacionActividades, nil
 					}
-
 				} else {
 					return nil, errors.New("error del servicio PonderacionActividades: La solicitud subgrupo_detalle plan \"plan\" contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 				}
@@ -1274,15 +1290,14 @@ func VinculacionTercero(terceroId string) (interface{}, error) {
 
 func Planes() (interface{}, error) {
 	var respuesta map[string]interface{}
-	var res map[string]interface{}
 	var planes []map[string]interface{}
 	var planesPED []map[string]interface{}
 	var planesPI []map[string]interface{}
-	var tipoPlanes []map[string]interface{}
-	var plan map[string]interface{}
 	var arregloPlanes []map[string]interface{}
 	var auxArregloPlanes []map[string]interface{}
 	var finalRes interface{}
+	var mutex sync.Mutex
+	wge := new(errgroup.Group)
 
 	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan?query=formato:true", &respuesta); err == nil {
 		request.LimpiezaRespuestaRefactor(respuesta, &planes)
@@ -1304,36 +1319,42 @@ func Planes() (interface{}, error) {
 		auxArregloPlanes = append(auxArregloPlanes, planesPED...)
 
 		for i := 0; i < len(auxArregloPlanes); i++ {
-			plan = auxArregloPlanes[i]
-			tipoPlanId := plan["tipo_plan_id"].(string)
+			i := i
+			wge.Go(func() error {
+				plan := auxArregloPlanes[i]
+				tipoPlanId := plan["tipo_plan_id"].(string)
 
-			if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/tipo-plan?query=_id:"+tipoPlanId, &res); err == nil {
-				request.LimpiezaRespuestaRefactor(res, &tipoPlanes)
-				tipoPlan := tipoPlanes[0]
-				nombreTipoPlan := tipoPlan["nombre"]
-				planesTipo := make(map[string]interface{})
-				planesTipo["_id"] = plan["_id"]
-				planesTipo["nombre"] = plan["nombre"]
-				planesTipo["descripcion"] = plan["descripcion"]
-				planesTipo["tipo_plan_id"] = tipoPlanId
-				planesTipo["formato"] = plan["formato"]
-				planesTipo["vigencia"] = plan["vigencia"]
-				planesTipo["dependencia_id"] = plan["dependencia_id"]
-				planesTipo["aplicativo_id"] = plan["aplicativo_id"]
-				planesTipo["activo"] = plan["activo"]
-				planesTipo["nombre_tipo_plan"] = nombreTipoPlan
+				var res map[string]interface{}
+				var tipoPlanes []map[string]interface{}
+				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/tipo-plan?query=_id:"+tipoPlanId, &res); err == nil {
+					request.LimpiezaRespuestaRefactor(res, &tipoPlanes)
+					tipoPlan := tipoPlanes[0]
+					nombreTipoPlan := tipoPlan["nombre"]
+					planesTipo := make(map[string]interface{})
+					planesTipo["_id"] = plan["_id"]
+					planesTipo["nombre"] = plan["nombre"]
+					planesTipo["descripcion"] = plan["descripcion"]
+					planesTipo["tipo_plan_id"] = tipoPlanId
+					planesTipo["formato"] = plan["formato"]
+					planesTipo["vigencia"] = plan["vigencia"]
+					planesTipo["dependencia_id"] = plan["dependencia_id"]
+					planesTipo["aplicativo_id"] = plan["aplicativo_id"]
+					planesTipo["activo"] = plan["activo"]
+					planesTipo["nombre_tipo_plan"] = nombreTipoPlan
 
-				arregloPlanes = append(arregloPlanes, planesTipo)
-
-				if arregloPlanes != nil {
+					mutex.Lock()
+					defer mutex.Unlock()
+					arregloPlanes = append(arregloPlanes, planesTipo)
 					finalRes = arregloPlanes
-				} else {
-					finalRes = ""
-				}
 
-			} else {
-				return nil, errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-			}
+				} else {
+					return errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
+				}
+				return nil
+			})
+		}
+		if err := wge.Wait(); err != nil {
+			return nil, errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 		}
 
 	} else {
@@ -1471,16 +1492,16 @@ func EstructuraPlanes(id string) (interface{}, error) {
 	return "La estructura de los planes fue actualizada correctamente", nil
 }
 
-func DefinirFechasFuncionamiento(datos []byte) (interface{}, error) {
+func DefinirFechas(datos []byte) (interface{}, error) {
 	var body map[string]interface{}
 	var res interface{}
 
 	// Decodificar JSON desde el cuerpo de la solicitud
 	err := json.Unmarshal(datos, &body)
 	if err != nil {
-		return nil, errors.New("error del servicio DefinirFechasFuncionamiento: Error al decodificar JSON" + err.Error())
+		return nil, errors.New("error del servicio DefinirFechasFormulacionSeguimiento: Error al decodificar JSON" + err.Error())
 	}
-	res = formulacionhelper.DefinirFechasFuncionamiento(body)
+	res = formulacionhelper.DefinirFechas(body)
 	return res, nil
 }
 
@@ -1509,5 +1530,156 @@ func GetPlanesUnidadesComun(id string, datos []byte) (interface{}, error) {
 		// c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Successful", "Data": planesInteres}
 	} else {
 		return nil, errors.New("error del servicio GetPlanesUnidadesComun: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
+	}
+}
+
+func GetPlanesDeAccion() (interface{}, error) {
+	if datos, err := formulacionhelper.ObtenerPlanesAccion(); err == nil {
+		return datos, nil
+	} else {
+		return nil, errors.New("error del servicio GetPlanesDeAccion" + err.Error())
+	}
+}
+
+func GetPlanesDeAccionPorUnidad(unidadID string) (interface{}, error) {
+	var planes []map[string]interface{}
+
+	if datos, err := formulacionhelper.ObtenerPlanesAccion(); err == nil {
+		for _, plan := range datos {
+			if plan["dependencia_id"] == unidadID {
+				planes = append(planes, plan)
+			}
+		}
+		return planes, nil
+	} else {
+		return nil, errors.New("error del servicio GetPlanesDeAccion" + err.Error())
+	}
+}
+
+func GetVinculacionTerceroByEmail(terceroEmail string) (interface{}, error) {
+	var vinculaciones []models.Vinculacion
+
+	idNoRegistra, idJefeOficina, idAsistenteDependencia, err := formulacionhelper.ObtenerIdParametros()
+	if err != nil {
+		panic(map[string]interface{}{"funcion": "VinculacionTercero", "err": "Error get parametros", "status": "400", "log": err})
+	}
+
+	if err := request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion?query=Activo:true,TerceroPrincipalId__UsuarioWSO2:"+terceroEmail, &vinculaciones); err != nil {
+		return nil, errors.New("error del servicio VinculacionTercero: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
+	} else {
+		var vinculacionesResponse []models.Vinculacion
+		for i := 0; i < len(vinculaciones); i++ {
+			if vinculaciones[i].CargoId == int(idJefeOficina) || vinculaciones[i].CargoId == int(idAsistenteDependencia) || vinculaciones[i].CargoId == int(idNoRegistra) {
+				vinculacionesResponse = append(vinculacionesResponse, vinculaciones[i])
+			}
+		}
+		if len(vinculacionesResponse) == 0 {
+			return nil, errors.New("error del servicio VinculacionTercero: No se encontró la vinculación")
+		}
+		return vinculacionesResponse, nil
+	}
+}
+
+func obtenerCorreoPlaneacion() (string, error) {
+	var respuestaPeticion map[string]interface{}
+	var correoPlaneacion map[string]interface{}
+	baseURL := "http://" + beego.AppConfig.String("ParametrosService") + "/parametro_periodo?query="
+	err := request.GetJson(baseURL+"ParametroId.CodigoAbreviacion:CORREO_OAP,ParametroId.TipoParametroId.CodigoAbreviacion:P_SISGPLAN,Activo:true", &respuestaPeticion)
+	jsonData, ok := respuestaPeticion["Data"].([]interface{})[0].(map[string]interface{})["Valor"].(string)
+
+	if err != nil || !ok {
+		return "", fmt.Errorf("no se pudo obtener el correo de la Oficina de Asesora de Planeación del módulo de parámetros, comuníquese con computo@udistrital.edu.co")
+	}
+	err1 := json.Unmarshal([]byte(jsonData), &correoPlaneacion)
+	if err1 != nil {
+		return "", fmt.Errorf("Error al deserializar el JSON de Correo Oficina Planeacion: ", err)
+	}
+	return correoPlaneacion["Valor"].(string), nil
+}
+
+func CambioCargoIdVinculacionTercero(idVinculacion string, cuerpo []byte) (*models.Vinculacion, error) {
+	const ROL_ASISTENTE_PLANEACION = "ASISTENTE_PLANEACION"
+	var vinculacionPlaneacion, rolAsistentePlaneacion bool
+	var vinculacion []models.Vinculacion
+	var body map[string]interface{}
+	json.Unmarshal(cuerpo, &body)
+
+	correoPlaneacion, errorPeticion := obtenerCorreoPlaneacion()
+	if errorPeticion != nil {
+		panic(map[string]interface{}{"funcion": "CambioCargoIdVinculacionTercero", "err": errorPeticion.Error(), "status": "400", "log": errorPeticion})
+	}
+
+	idNoRegistra, idJefeOficina, idAsistenteDependencia, err := formulacionhelper.ObtenerIdParametros()
+	if err != nil {
+		return nil, errors.New("error del servicio CambioCargoIdVinculacionTercero: Error al obtener parametros" + err.Error())
+	}
+
+	err = request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion?query=Activo:true,Id:"+idVinculacion, &vinculacion)
+	if err != nil || vinculacion[0].CargoId == 0 {
+		return nil, errors.New("error del servicio CambioCargoIdVinculacionTercero: Error al obtener vinculacion" + err.Error())
+	}
+
+	vinculaciones := body["user"].(map[string]interface{})["Vinculacion"].([]interface{})
+	vinculacionSeleccionada := body["user"].(map[string]interface{})["VinculacionSeleccionadaId"]
+
+	for _, vinculacion := range vinculaciones {
+		if vinculacion.(map[string]interface{})["Id"].(float64) == vinculacionSeleccionada {
+			if DependenciaCorreo, ok := vinculacion.(map[string]interface{})["DependenciaCorreo"].(string); ok {
+				vinculacionPlaneacion = DependenciaCorreo == correoPlaneacion
+				rolAsistentePlaneacion = (body["rol"].(string) == ROL_ASISTENTE_PLANEACION)
+				if rolAsistentePlaneacion && !vinculacionPlaneacion && body["vincular"] == true {
+					return nil, fmt.Errorf("El usuario no puede tener el rol de %s si no pertenece a la Oficina de Asesora de Planeación", ROL_ASISTENTE_PLANEACION)
+				}
+			} else {
+				return nil, fmt.Errorf("no se pudo obtener la Dependencia asociada a la vinculación")
+			}
+		}
+	}
+
+	if vinculacion[0].CargoId == int(idJefeOficina) || vinculacion[0].CargoId == int(idAsistenteDependencia) || vinculacion[0].CargoId == int(idNoRegistra) {
+		if body["vincular"] == true {
+			vinculacion[0].CargoId = int(idAsistenteDependencia)
+		} else {
+			vinculacion[0].CargoId = int(idNoRegistra)
+		}
+		vinculacion[0].FechaCreacion, err = formulacionhelper.FormatearFecha(vinculacion[0].FechaCreacion)
+		if err != nil {
+			return nil, errors.New("error del servicio CambioCargoIdVinculacionTercero: Error al formatear fecha" + err.Error())
+		}
+		vinculacion[0].FechaModificacion = time.Now().Format(time.RFC3339)
+		if err := request.SendJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion/"+idVinculacion, "PUT", &vinculacion[0], vinculacion[0]); err != nil {
+			return nil, errors.New("error del servicio CambioCargoIdVinculacionTercero: Error al actualizar vinculacion" + err.Error())
+		}
+		return &vinculacion[0], nil
+	}
+
+	return nil, errors.New("No se encontró la vinculación")
+}
+
+func VinculacionTerceroByIdentificacion(identificacionTercero string) (interface{}, error) {
+	var vinculaciones []models.Vinculacion
+	var tercero []models.DatosIdentificacion
+
+	idNoRegistra, idJefeOficina, idAsistenteDependencia, err := formulacionhelper.ObtenerIdParametros()
+	if err != nil {
+		return nil, errors.New("error del servicio VinculacionTerceroByIdentificacion: Error get parametros" + err.Error())
+	}
+
+	s := "Numero:" + identificacionTercero + ",Activo:true"
+	if err := request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/datos_identificacion?query="+url.QueryEscape(s), &tercero); err != nil || tercero[0].TerceroID.ID == 0 {
+		return nil, errors.New("error del servicio VinculacionTerceroByIdentificacion: Error get tercero" + err.Error())
+	}
+
+	TerceroIdStr := fmt.Sprintf("%d", tercero[0].TerceroID.ID)
+	if err := request.GetJson("http://"+beego.AppConfig.String("TercerosService")+"/vinculacion?query=Activo:true,TerceroPrincipalId:"+TerceroIdStr, &vinculaciones); err != nil {
+		return nil, errors.New("error del servicio VinculacionTerceroByIdentificacion: Error get vinculacion" + err.Error())
+	} else {
+		var vinculacionesResponse []models.Vinculacion
+		for i := 0; i < len(vinculaciones); i++ {
+			if vinculaciones[i].CargoId == int(idJefeOficina) || vinculaciones[i].CargoId == int(idAsistenteDependencia) || vinculaciones[i].CargoId == int(idNoRegistra) {
+				vinculacionesResponse = append(vinculacionesResponse, vinculaciones[i])
+			}
+		}
+		return vinculacionesResponse, nil
 	}
 }

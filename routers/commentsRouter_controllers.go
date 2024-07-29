@@ -63,6 +63,15 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
+            Method: "CambioCargoIdVinculacionTercero",
+            Router: "/cargo_vinculacion/:id",
+            AllowHTTPMethods: []string{"put"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
+        beego.ControllerComments{
             Method: "EstructuraPlanes",
             Router: "/estructura_planes/:id",
             AllowHTTPMethods: []string{"put"},
@@ -99,8 +108,8 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
-            Method: "DefinirFechasFuncionamiento",
-            Router: "/habilitar_fechas_funcionamiento",
+            Method: "HabilitarFechas",
+            Router: "/habilitar_fechas",
             AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
@@ -180,6 +189,24 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
+            Method: "PlanesDeAccion",
+            Router: "/planes_accion",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
+        beego.ControllerComments{
+            Method: "PlanesDeAccionPorUnidad",
+            Router: "/planes_accion/:unidad_id",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
+        beego.ControllerComments{
             Method: "PlanesEnFormulacion",
             Router: "/planes_formulacion",
             AllowHTTPMethods: []string{"get"},
@@ -209,6 +236,24 @@ func init() {
         beego.ControllerComments{
             Method: "GetUnidades",
             Router: "/unidades",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
+        beego.ControllerComments{
+            Method: "VinculacionTerceroByEmail",
+            Router: "/vinculacion_tercero_email/:tercero_email",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
+        beego.ControllerComments{
+            Method: "VinculacionTerceroByIdentificacion",
+            Router: "/vinculacion_tercero_identificacion/:identificacion",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,

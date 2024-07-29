@@ -232,6 +232,44 @@
                 }
             }
         },
+        "/formulacion/cargo_vinculacion/{id}": {
+            "put": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "put Cambio de cargo_id en VinculacionTercero by idVinculacion",
+                "operationId": "FormulacionController.CambioCargoIdVinculacionTercero",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for Plan content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/{}"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
         "/formulacion/estructura_planes/{id}": {
             "put": {
                 "tags": [
@@ -375,13 +413,13 @@
                 }
             }
         },
-        "/formulacion/habilitar_fechas_funcionamiento": {
+        "/formulacion/habilitar_fechas": {
             "post": {
                 "tags": [
                     "formulacion"
                 ],
-                "description": "Peticion POST para definir fechas en planes de acción de funcionamiento",
-                "operationId": "FormulacionController.DefinirFechasFuncionamiento",
+                "description": "Peticion POST para habilitar fechas en planes de acción de funcionamiento e inversión para los procesos de formulación y seguimiento",
+                "operationId": "FormulacionController.HabilitarFechas",
                 "parameters": [
                     {
                         "in": "body",
@@ -685,6 +723,55 @@
                 }
             }
         },
+        "/formulacion/planes_accion": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Planes de Acción",
+                "operationId": "FormulacionController.PlanesDeAccion",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "400": {
+                        "description": "bad response"
+                    }
+                }
+            }
+        },
+        "/formulacion/planes_accion/{unidad_id}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get Planes de accion filtrando por el id de la unidad",
+                "operationId": "FormulacionController.PlanesDeAccionPorUnidad",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
         "/formulacion/planes_formulacion": {
             "get": {
                 "tags": [
@@ -761,6 +848,64 @@
                 ],
                 "description": "get Unidades",
                 "operationId": "FormulacionController.GetUnidades",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/vinculacion_tercero_email/{tercero_email}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get VinculacionTerceroByEmail",
+                "operationId": "FormulacionController.VinculacionTerceroByEmail",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "tercero_email",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/models.Formulacion"
+                        }
+                    },
+                    "403": {
+                        "description": ":id is empty"
+                    }
+                }
+            }
+        },
+        "/formulacion/vinculacion_tercero_identificacion/{identificacion}": {
+            "get": {
+                "tags": [
+                    "formulacion"
+                ],
+                "description": "get VinculacionTerceroByIdentificacion",
+                "operationId": "FormulacionController.VinculacionTerceroByIdentificacion",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "identificacion",
+                        "description": "The key for staticblock",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "",
