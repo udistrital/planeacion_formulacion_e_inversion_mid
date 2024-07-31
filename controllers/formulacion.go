@@ -40,6 +40,7 @@ func (c *FormulacionController) URLMapping() {
 	c.Mapping("PlanesDeAccionPorUnidad", c.PlanesDeAccionPorUnidad)
 	c.Mapping("VinculacionTerceroByEmail", c.VinculacionTerceroByEmail)
 	c.Mapping("CambioCargoIdVinculacionTercero", c.CambioCargoIdVinculacionTercero)
+	c.Mapping("VinculacionTerceroByIdentificacion", c.VinculacionTerceroByIdentificacion)
 }
 
 // ClonarFormato ...
@@ -668,6 +669,28 @@ func (c *FormulacionController) CambioCargoIdVinculacionTercero() {
 	body := c.Ctx.Input.RequestBody
 
 	if resultado, err := services.CambioCargoIdVinculacionTercero(id, body); err == nil {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
+	} else {
+		c.Ctx.Output.SetStatus(400)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 400, nil, err)
+	}
+	c.ServeJSON()
+}
+
+// VinculacionTerceroByIdentificacion ...
+// @Title VinculacionTerceroByIdentificacion
+// @Description get VinculacionTerceroByIdentificacion
+// @Param	identificacion	path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Formulacion
+// @Failure 403 :id is empty
+// @router /vinculacion_tercero_identificacion/:identificacion [get]
+func (c *FormulacionController) VinculacionTerceroByIdentificacion() {
+	defer errorhandler.HandlePanic(&c.Controller)
+
+	identificacionTercero := c.Ctx.Input.Param(":identificacion")
+
+	if resultado, err := services.VinculacionTerceroByIdentificacion(identificacionTercero); err == nil {
 		c.Ctx.Output.SetStatus(200)
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
