@@ -229,38 +229,36 @@ func ActualizarActividad(id string, index string, datos []byte) (interface{}, er
 
 		if len(keyStr) > 1 && keyStr[1] == "o" {
 			id_subgrupoDetalle = keyStr[0]
-			if element != "" {
-				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle/detalle/"+id_subgrupoDetalle, &respuesta); err != nil {
-					return nil, errors.New("error del servicio ActualizarActividad: La solicitud get subgrupo-detalle contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-				}
-				request.LimpiezaRespuestaRefactor(respuesta, &respuestaLimpia)
-
-				subgrupo_detalle = respuestaLimpia[0]
-				if subgrupo_detalle["dato_plan"] != nil {
-					actividad := make(map[string]interface{})
-					dato_plan_str := subgrupo_detalle["dato_plan"].(string)
-					json.Unmarshal([]byte(dato_plan_str), &dato_plan)
-					for index_actividad := range dato_plan {
-						if index_actividad == index {
-							aux_actividad := dato_plan[index_actividad].(map[string]interface{})
-							actividad["index"] = index_actividad
-							actividad["dato"] = aux_actividad["dato"]
-							actividad["activo"] = aux_actividad["activo"]
-							actividad["observacion"] = element
-
-							dato_plan[index_actividad] = actividad
-						}
-					}
-					b, _ := json.Marshal(dato_plan)
-					str := string(b)
-					subgrupo_detalle["dato_plan"] = str
-				}
-
-				if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle/"+subgrupo_detalle["_id"].(string), "PUT", &res, subgrupo_detalle); err != nil {
-					return nil, errors.New("error del servicio ActualizarActividad: La solicitud de actualizando subgrupo-detalle contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-				}
-
+			if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle/detalle/"+id_subgrupoDetalle, &respuesta); err != nil {
+				return nil, errors.New("error del servicio ActualizarActividad: La solicitud get subgrupo-detalle contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 			}
+			request.LimpiezaRespuestaRefactor(respuesta, &respuestaLimpia)
+
+			subgrupo_detalle = respuestaLimpia[0]
+			if subgrupo_detalle["dato_plan"] != nil {
+				actividad := make(map[string]interface{})
+				dato_plan_str := subgrupo_detalle["dato_plan"].(string)
+				json.Unmarshal([]byte(dato_plan_str), &dato_plan)
+				for index_actividad := range dato_plan {
+					if index_actividad == index {
+						aux_actividad := dato_plan[index_actividad].(map[string]interface{})
+						actividad["index"] = index_actividad
+						actividad["dato"] = aux_actividad["dato"]
+						actividad["activo"] = aux_actividad["activo"]
+						actividad["observacion"] = element
+
+						dato_plan[index_actividad] = actividad
+					}
+				}
+				b, _ := json.Marshal(dato_plan)
+				str := string(b)
+				subgrupo_detalle["dato_plan"] = str
+			}
+
+			if err := request.SendJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo-detalle/"+subgrupo_detalle["_id"].(string), "PUT", &res, subgrupo_detalle); err != nil {
+				return nil, errors.New("error del servicio ActualizarActividad: La solicitud de actualizando subgrupo-detalle contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
+			}
+
 			continue
 		}
 		id_subgrupoDetalle = key
@@ -299,9 +297,7 @@ func ActualizarActividad(id string, index string, datos []byte) (interface{}, er
 					actividad["index"] = index_actividad
 					actividad["dato"] = element
 					actividad["activo"] = aux_actividad["activo"]
-					if aux_actividad["observacion"] != nil {
-						actividad["observacion"] = aux_actividad["observacion"]
-					}
+					actividad["observacion"] = aux_actividad["observacion"]
 					dato_plan[index_actividad] = actividad
 				}
 			}
