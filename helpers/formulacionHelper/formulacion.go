@@ -2395,7 +2395,6 @@ func eliminarUnidad(unidades []map[string]interface{}, id int) []map[string]inte
 		if unidad["Id"].(int) == id {
 			// Eliminar la unidad del slice
 			unidades = append(unidades[:i], unidades[i+1:]...)
-			break
 		}
 	}
 	return unidades
