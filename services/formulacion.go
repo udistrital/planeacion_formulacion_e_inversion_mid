@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"math"
 	"net/http"
 	"net/url"
@@ -91,6 +92,69 @@ func ClonarFormato(id string, body []byte) (interface{}, error) {
 	}
 
 	return resPost, nil
+}
+
+func ClonarPI_PED(id string, body []byte) (interface{}, error) {
+
+	var respuesta map[string]interface{}
+	var respuestaHijos map[string]interface{}
+	var hijos []map[string]interface{}
+	var planFormato map[string]interface{}
+	var parametros map[string]interface{}
+
+	plan := make(map[string]interface{})
+	clienteHttp := &http.Client{}
+	url := "http://" + beego.AppConfig.String("PlanesService") + "/plan/"
+
+	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan/"+id, &respuesta); err == nil {
+
+		request.LimpiezaRespuestaRefactor(respuesta, &planFormato)
+		json.Unmarshal(body, &parametros)
+
+		plan["nombre"] = "" + planFormato["nombre"].(string) + " - CLONADO"
+		plan["descripcion"] = planFormato["descripcion"].(string)
+		plan["tipo_plan_id"] = planFormato["tipo_plan_id"].(string)
+		plan["aplicativo_id"] = planFormato["aplicativo_id"].(string)
+		plan["activo"] = planFormato["activo"]
+		plan["formato"] = planFormato["formato"]
+
+		var resPost map[string]interface{}
+		var resLimpia map[string]interface{}
+
+		aux, err := json.Marshal(plan)
+		if err != nil {
+			log.Fatalf("Error codificado: %v", err)
+		}
+
+		peticion, err := http.NewRequest("POST", url, bytes.NewBuffer(aux))
+		if err != nil {
+			log.Fatalf("Error creando peticion: %v", err)
+		}
+		peticion.Header.Set("Content-Type", "application/json; charset=UTF-8")
+		respuesta, err := clienteHttp.Do(peticion)
+		if err != nil {
+			log.Fatalf("Error haciendo peticion: %v", err)
+		}
+
+		defer respuesta.Body.Close()
+
+		cuerpoRespuesta, err := io.ReadAll(respuesta.Body)
+		if err != nil {
+			log.Fatalf("Error leyendo peticion: %v", err)
+		}
+
+		json.Unmarshal(cuerpoRespuesta, &resPost)
+		resLimpia = resPost["Data"].(map[string]interface{})
+		padre := resLimpia["_id"].(string)
+
+		if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/subgrupo/hijos/"+id, &respuestaHijos); err == nil {
+			request.LimpiezaRespuestaRefactor(respuestaHijos, &hijos)
+			formulacionhelper.ClonarHijos(hijos, padre)
+		}
+		return resPost, nil
+
+	}
+	return nil, errors.New("error del servicio ClonarPI_PED: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido")
 }
 
 func GuardarActividad(id string, datos []byte) (interface{}, error) {
@@ -1341,7 +1405,24 @@ func Planes() (interface{}, error) {
 					mutex.Lock()
 					defer mutex.Unlock()
 					arregloPlanes = append(arregloPlanes, planesTipo)
-					finalRes = arregloPlanes
+
+					if arregloPlanes != nil {
+						// Mapa auxiliar para rastrear IDs únicos
+						idMap := make(map[string]bool)
+
+						// Nuevo slice para almacenar elementos únicos
+						uniquePlanes := []map[string]interface{}{}
+
+						for _, plan := range arregloPlanes {
+							id := plan["_id"].(string)
+							if !idMap[id] {
+								// Si el ID no ha sido visto antes, añadirlo al mapa y al slice único
+								idMap[id] = true
+								uniquePlanes = append(uniquePlanes, plan)
+							}
+						}
+						finalRes = uniquePlanes
+					}
 
 				} else {
 					return errors.New("error del servicio Planes: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())

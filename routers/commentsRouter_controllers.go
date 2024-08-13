@@ -72,6 +72,15 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
+            Method: "ClonarPI_PED",
+            Router: "/clonar-pi-ped/:id",
+            AllowHTTPMethods: []string{"post"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
+        beego.ControllerComments{
             Method: "EstructuraPlanes",
             Router: "/estructura_planes/:id",
             AllowHTTPMethods: []string{"put"},
@@ -117,18 +126,18 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
-            Method: "GuardarIdentificacion",
+            Method: "GetAllIdentificacion",
             Router: "/identificacion/:id/:idTipo",
-            AllowHTTPMethods: []string{"put"},
+            AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
 
     beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"] = append(beego.GlobalControllerRouter["github.com/udistrital/planeacion_formulacion_mid/controllers:FormulacionController"],
         beego.ControllerComments{
-            Method: "GetAllIdentificacion",
+            Method: "GuardarIdentificacion",
             Router: "/identificacion/:id/:idTipo",
-            AllowHTTPMethods: []string{"get"},
+            AllowHTTPMethods: []string{"put"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
