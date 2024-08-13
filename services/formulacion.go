@@ -199,7 +199,7 @@ func GuardarActividad(id string, datos []byte) (interface{}, error) {
 			actividad := make(map[string]interface{})
 
 			if subgrupo_detalle["dato_plan"] == nil {
-				actividad["index"] = 1
+				actividad["index"] = maxIndex + 1
 				actividad["dato"] = element
 				actividad["activo"] = true
 				i := strconv.Itoa(actividad["index"].(int))
@@ -1110,227 +1110,51 @@ func GetUnidades() (interface{}, error) {
 	var respuesta []map[string]interface{}
 	var unidades []map[string]interface{}
 
-	if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:2&limit=0", &respuesta); err == nil {
+	tiposDependencia := []string{"2", "3", "4", "5", "6", "7", "8", "11", "13", "15", "28", "33"}
+	for _, tipoDep := range tiposDependencia {
+		respuesta = nil
+		err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?limit=0&query=TipoDependenciaId:"+tipoDep, &respuesta)
+		if err != nil {
+			return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
+		}
 		for i := 0; i < len(respuesta); i++ {
+			if tipoDep == "15" {
+				aux := respuesta[i]["DependenciaId"]
+				if strings.Contains(aux.(map[string]interface{})["Nombre"].(string), "DOCTORADO") {
+					aux := respuesta[i]["DependenciaId"].(map[string]interface{})
+					aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
+					unidades = append(unidades, aux)
+				}
+				continue
+			}
+
 			aux := respuesta[i]["DependenciaId"].(map[string]interface{})
 			aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
 			unidades = append(unidades, aux)
 		}
-		respuesta = nil
+	}
 
-		if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:3&limit=0", &respuesta); err == nil {
+	tipoDependenciaDependencia := map[string][]string{
+		"10": {"92", "96", "97", "209"},
+		"14": {"42", "171"},
+		"33": {"222"},
+	}
+	for tipoDep, deps := range tipoDependenciaDependencia {
+		for _, dep := range deps {
+			respuesta = nil
+			err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?limit=0&query=TipoDependenciaId:"+tipoDep+",DependenciaId:"+dep, &respuesta)
+			if err != nil {
+				return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
+			}
 			for i := 0; i < len(respuesta); i++ {
 				aux := respuesta[i]["DependenciaId"].(map[string]interface{})
 				aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
 				unidades = append(unidades, aux)
 			}
-			respuesta = nil
-
-			if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:4&limit=0", &respuesta); err == nil {
-				for i := 0; i < len(respuesta); i++ {
-					aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-					aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-					unidades = append(unidades, aux)
-				}
-				respuesta = nil
-
-				if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:5&limit=0", &respuesta); err == nil {
-					for i := 0; i < len(respuesta); i++ {
-						aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-						aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-						unidades = append(unidades, aux)
-					}
-					respuesta = nil
-					if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:6&limit=0", &respuesta); err == nil {
-						for i := 0; i < len(respuesta); i++ {
-							aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-							aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-							unidades = append(unidades, aux)
-						}
-						respuesta = nil
-						if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:7&limit=0", &respuesta); err == nil {
-							for i := 0; i < len(respuesta); i++ {
-								aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-								aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-								unidades = append(unidades, aux)
-							}
-							respuesta = nil
-
-							if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:8&limit=0", &respuesta); err == nil {
-								for i := 0; i < len(respuesta); i++ {
-									aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-									aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-									unidades = append(unidades, aux)
-								}
-								respuesta = nil
-
-								if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:13&limit=0", &respuesta); err == nil {
-									for i := 0; i < len(respuesta); i++ {
-										aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-										aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-										unidades = append(unidades, aux)
-									}
-									respuesta = nil
-
-									if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:15&limit=0", &respuesta); err == nil {
-										for i := 0; i < len(respuesta); i++ {
-											aux := respuesta[i]["DependenciaId"]
-											if strings.Contains(aux.(map[string]interface{})["Nombre"].(string), "DOCTORADO") {
-												aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-												aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-												unidades = append(unidades, aux)
-											}
-										}
-										respuesta = nil
-
-										if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:11&limit=0", &respuesta); err == nil {
-											for i := 0; i < len(respuesta); i++ {
-												aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-												aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-												unidades = append(unidades, aux)
-											}
-											respuesta = nil
-
-											if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:28&limit=0", &respuesta); err == nil {
-												for i := 0; i < len(respuesta); i++ {
-													aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-													aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-													unidades = append(unidades, aux)
-												}
-												respuesta = nil
-
-												if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:33&limit=0", &respuesta); err == nil {
-													for i := 0; i < len(respuesta); i++ {
-														aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-														aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-														unidades = append(unidades, aux)
-													}
-													respuesta = nil
-
-													if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:14,DependenciaId:171&limit=0", &respuesta); err == nil {
-														for i := 0; i < len(respuesta); i++ {
-															aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-															aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-															unidades = append(unidades, aux)
-														}
-														respuesta = nil
-
-														if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:10,DependenciaId:96&limit=0", &respuesta); err == nil {
-															for i := 0; i < len(respuesta); i++ {
-																aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-																aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-																unidades = append(unidades, aux)
-															}
-															respuesta = nil
-
-														} else {
-															return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-														}
-
-														if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:33,DependenciaId:222&limit=0", &respuesta); err == nil {
-															for i := 0; i < len(respuesta); i++ {
-																aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-																aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-																unidades = append(unidades, aux)
-															}
-															respuesta = nil
-
-														} else {
-															return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-														}
-
-														if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:10,DependenciaId:97&limit=0", &respuesta); err == nil {
-															for i := 0; i < len(respuesta); i++ {
-																aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-																aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-																unidades = append(unidades, aux)
-															}
-															respuesta = nil
-
-														} else {
-															return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-														}
-
-														if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:10,DependenciaId:209&limit=0", &respuesta); err == nil {
-															for i := 0; i < len(respuesta); i++ {
-																aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-																aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-																unidades = append(unidades, aux)
-															}
-															respuesta = nil
-
-														} else {
-															return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-														}
-
-														if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:10,DependenciaId:92&limit=0", &respuesta); err == nil {
-															for i := 0; i < len(respuesta); i++ {
-																aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-																aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-																unidades = append(unidades, aux)
-															}
-															respuesta = nil
-
-														} else {
-															return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-														}
-
-														if err := request.GetJson("http://"+beego.AppConfig.String("OikosService")+"/dependencia_tipo_dependencia?query=TipoDependenciaId:14,DependenciaId:42&limit=0", &respuesta); err == nil {
-															for i := 0; i < len(respuesta); i++ {
-																aux := respuesta[i]["DependenciaId"].(map[string]interface{})
-																aux["TipoDependencia"] = respuesta[i]["TipoDependenciaId"]
-																unidades = append(unidades, aux)
-															}
-															respuesta = nil
-
-														} else {
-															return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-														}
-														return unidades, nil
-
-													} else {
-														return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-													}
-
-												} else {
-													return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-												}
-											} else {
-												return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-											}
-										} else {
-											return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-										}
-									} else {
-										return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-									}
-								} else {
-									return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-								}
-							} else {
-								return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-							}
-						} else {
-							return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-						}
-					} else {
-						return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-					}
-				} else {
-					return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-				}
-
-			} else {
-				return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
-			}
-
-		} else {
-			return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 		}
-
-	} else {
-		return nil, errors.New("error del servicio GetUnidades: La solicitud contiene un tipo de dato incorrecto o un parámetro inválido" + err.Error())
 	}
+
+	return unidades, nil
 }
 
 func VinculacionTercero(terceroId string) (interface{}, error) {
