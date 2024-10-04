@@ -963,7 +963,7 @@ func VersionarPlan(id string) (interface{}, error) {
 func GetPlanVersiones(unidad string, vigencia string, nombre string) (interface{}, error) {
 	var respuesta map[string]interface{}
 	var versiones []map[string]interface{}
-	var reformulaciones []interface{}
+
 	if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/plan?query=dependencia_id:"+unidad+",vigencia:"+vigencia+",formato:false,nombre:"+nombre, &respuesta); err == nil {
 		request.LimpiezaRespuestaRefactor(respuesta, &versiones)
 		versionesOrdenadas := formulacionhelper.OrdenarVersiones(versiones)
@@ -971,8 +971,7 @@ func GetPlanVersiones(unidad string, vigencia string, nombre string) (interface{
 			padre_plan_id, ok := version["padre_plan_id"]
 			if ok {
 				if err := request.GetJson("http://"+beego.AppConfig.String("PlanesService")+"/reformulacion?query=plan_id:"+padre_plan_id.(string), &respuesta); err == nil {
-					reformulaciones = respuesta["Data"].([]interface{})
-					if len(reformulaciones) > 0 {
+					if len(respuesta["Data"].([]interface{})) > 0 {
 						version["reformulacion"] = true
 					} else {
 						version["reformulacion"] = false
