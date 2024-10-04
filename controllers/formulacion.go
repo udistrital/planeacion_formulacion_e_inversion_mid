@@ -15,6 +15,7 @@ type FormulacionController struct {
 // URLMapping ...
 func (c *FormulacionController) URLMapping() {
 	c.Mapping("ClonarFormato", c.ClonarFormato)
+	c.Mapping("ClonarPI_PED", c.ClonarPI_PED)
 	c.Mapping("GuardarActividad", c.GuardarActividad)
 	c.Mapping("GetPlan", c.GetPlan)
 	c.Mapping("ActualizarActividad", c.ActualizarActividad)
@@ -58,6 +59,30 @@ func (c *FormulacionController) ClonarFormato() {
 	body := c.Ctx.Input.RequestBody
 
 	if resultado, err := services.ClonarFormato(id, body); err == nil {
+		c.Ctx.Output.SetStatus(200)
+		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
+	} else {
+		c.Ctx.Output.SetStatus(404)
+		c.Data["json"] = requestresponse.APIResponseDTO(false, 404, nil, err)
+	}
+
+	c.ServeJSON()
+}
+
+// ClonarPI_PED ...
+// @Title ClonarPI_PED
+// @Description Metodo para clonar los PI y PED
+// @Param	id		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Formulacion
+// @Failure 403 :id is empty
+// @router /clonar-pi-ped/:id [post]
+func (c *FormulacionController) ClonarPI_PED() {
+	defer errorhandler.HandlePanic(&c.Controller)
+
+	id := c.Ctx.Input.Param(":id")
+	body := c.Ctx.Input.RequestBody
+
+	if resultado, err := services.ClonarPI_PED(id, body); err == nil {
 		c.Ctx.Output.SetStatus(200)
 		c.Data["json"] = requestresponse.APIResponseDTO(true, 200, resultado)
 	} else {
